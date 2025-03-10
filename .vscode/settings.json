@@ -1,0 +1,29 @@
+{
+    "files.associations": {
+        "main.h": "c",
+        "vga.h": "c",
+        "stm32h7xx_it.h": "c",
+        "rgb_conv.h": "c",
+        "net_server.h": "c",
+        "i_timer.h": "c",
+        "string.h": "c",
+        "cstdlib": "c",
+        "doomkeys.h": "c",
+        "deh_str.h": "c",
+        "mus2mid.h": "c",
+        "memio.h": "c",
+        "i_joystick.h": "c",
+        "i_system.h": "c",
+        "doomtype.h": "c",
+        "stdlib.h": "c",
+        "ext_mem.h": "c",
+        "stdint.h": "c",
+        "unistd.h": "c",
+        "ff.h": "c",
+        "net_gui.h": "c",
+        "net_dedicated.h": "c",
+        "d_main.h": "c",
+        "m_argv.h": "c",
+        "statdump.h": "c"
+    }
+}

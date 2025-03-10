@@ -1,0 +1,5 @@
+../Core/doom/deh_ptr.c:31:12:CodePointerIndex	24	static
+../Core/doom/deh_ptr.c:46:13:DEH_PointerInit	16	static
+../Core/doom/deh_ptr.c:56:14:DEH_PointerStart	24	static
+../Core/doom/deh_ptr.c:78:13:DEH_PointerParseLine	40	static
+../Core/doom/deh_ptr.c:123:13:DEH_PointerSHA1Sum	24	static

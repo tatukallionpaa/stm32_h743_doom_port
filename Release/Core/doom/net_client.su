@@ -1,0 +1,15 @@
+../Core/doom/net_client.c:501:13:NET_CL_ParseWaitingData	560	static
+../Core/doom/net_client.c:611:13:NET_CL_SendResendRequest	16	static
+../Core/doom/net_client.c:340:13:NET_CL_SendTics.part.0	32	static
+../Core/doom/net_client.c:291:13:NET_CL_Shutdown	0	static
+../Core/doom/net_client.c:468:13:SetRejectReason	16	static
+../Core/doom/net_client.c:303:6:NET_CL_LaunchGame	0	static
+../Core/doom/net_client.c:308:6:NET_CL_StartGame	8	static
+../Core/doom/net_client.c:395:6:NET_CL_SendTiccmd	48	static
+../Core/doom/net_client.c:993:6:NET_CL_Run	256	static
+../Core/doom/net_client.c:1062:9:NET_CL_Connect	40	static
+../Core/doom/net_client.c:1155:9:NET_CL_GetSettings	8	static
+../Core/doom/net_client.c:1169:6:NET_CL_Disconnect	16	static
+../Core/doom/net_client.c:1209:6:NET_CL_Init	8	static
+../Core/doom/net_client.c:1220:6:NET_Init	8	static
+../Core/doom/net_client.c:1226:6:NET_BindVariables	0	static

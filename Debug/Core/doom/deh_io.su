@@ -1,0 +1,12 @@
+../Core/doom/deh_io.c:65:23:DEH_NewContext	16	static
+../Core/doom/deh_io.c:86:16:DEH_OpenFile	24	static
+../Core/doom/deh_io.c:107:16:DEH_OpenLump	24	static
+../Core/doom/deh_io.c:130:6:DEH_CloseFile	16	static
+../Core/doom/deh_io.c:146:5:DEH_GetCharFile	16	static
+../Core/doom/deh_io.c:158:5:DEH_GetCharLump	24	static
+../Core/doom/deh_io.c:175:5:DEH_GetChar	24	static
+../Core/doom/deh_io.c:230:13:IncreaseReadBuffer	24	static
+../Core/doom/deh_io.c:248:7:DEH_ReadLine	32	static
+../Core/doom/deh_io.c:325:6:DEH_Warning	28	static
+../Core/doom/deh_io.c:338:6:DEH_Error	28	static
+../Core/doom/deh_io.c:353:9:DEH_HadError	16	static

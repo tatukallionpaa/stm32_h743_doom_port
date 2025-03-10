@@ -24,6 +24,7 @@ C_DEPS :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
+Core/doom \
 Drivers/STM32H7xx_HAL_Driver/Src \
 FATFS/App \
 FATFS/Target \

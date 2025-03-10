@@ -1,0 +1,2 @@
+../Core/doom/deh_sound.c:39:14:DEH_SoundStart	24	static
+../Core/doom/deh_sound.c:64:13:DEH_SoundParseLine	48	static

@@ -1,0 +1,2 @@
+../Core/doom/deh_bexstr.c:336:14:DEH_BEXStrStart	32	static
+../Core/doom/deh_bexstr.c:348:13:DEH_BEXStrParseLine	40	static

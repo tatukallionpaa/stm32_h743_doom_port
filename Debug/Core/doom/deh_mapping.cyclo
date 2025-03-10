@@ -1,0 +1,5 @@
+../Core/doom/deh_mapping.c:30:29:GetMappingEntryByName	4
+../Core/doom/deh_mapping.c:63:14:GetStructField	1
+../Core/doom/deh_mapping.c:78:9:DEH_SetMapping	7
+../Core/doom/deh_mapping.c:129:9:DEH_SetStringMapping	3
+../Core/doom/deh_mapping.c:159:6:DEH_StructSHA1Sum	6

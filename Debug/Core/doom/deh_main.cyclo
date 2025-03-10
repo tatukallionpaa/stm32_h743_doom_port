@@ -1,0 +1,15 @@
+../Core/doom/deh_main.c:53:6:DEH_Checksum	3
+../Core/doom/deh_main.c:73:13:InitializeSections	3
+../Core/doom/deh_main.c:86:13:DEH_Init	2
+../Core/doom/deh_main.c:107:23:GetSectionByName	5
+../Core/doom/deh_main.c:132:16:IsWhitespace	3
+../Core/doom/deh_main.c:145:14:CleanString	5
+../Core/doom/deh_main.c:177:9:DEH_ParseAssignment	2
+../Core/doom/deh_main.c:203:16:CheckSignatures	4
+../Core/doom/deh_main.c:232:13:DEH_ParseComment	4
+../Core/doom/deh_main.c:281:13:DEH_ParseContext	14
+../Core/doom/deh_main.c:371:5:DEH_LoadFile	3
+../Core/doom/deh_main.c:410:6:DEH_AutoLoadPatches	2
+../Core/doom/deh_main.c:434:5:DEH_LoadLump	4
+../Core/doom/deh_main.c:470:5:DEH_LoadLumpByName	2
+../Core/doom/deh_main.c:486:6:DEH_ParseCommandLine	4

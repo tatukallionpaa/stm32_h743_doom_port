@@ -1,0 +1,3 @@
+../Core/doom/deh_text.c:33:12:TXT_MaxStringLength	16	static
+../Core/doom/deh_text.c:50:14:DEH_TextStart	40	static
+../Core/doom/deh_text.c:99:13:DEH_TextParseLine	24	static

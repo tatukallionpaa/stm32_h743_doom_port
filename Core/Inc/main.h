@@ -31,7 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "d_main.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -68,6 +68,10 @@ void record_cnt(uint32_t cnt);
 #define VGA_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
+
+extern volatile uint32_t g_systime_ms;
+extern volatile uint32_t g_systime_ms_delay;
+extern volatile uint8_t *g_vga_feed_buffer;
 
 /* USER CODE END Private defines */
 
