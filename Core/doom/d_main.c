@@ -482,6 +482,7 @@ void D_DoomLoop(void)
     while (1)
     {
         D_RunFrame();
+        //main_sleep_func();
     }
 }
 

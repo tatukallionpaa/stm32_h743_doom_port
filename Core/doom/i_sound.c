@@ -27,6 +27,8 @@
 #include "m_argv.h"
 #include "m_config.h"
 
+#include "i_stm32_sound.h"
+
 #ifdef ORIGCODE
 #ifndef DISABLE_SDL2MIXER
 
@@ -85,13 +87,14 @@ static int snd_mport = 0;
 
 static const sound_module_t *sound_modules[] =
     {
-#ifdef FEATURE_SOUND
+#ifdef ORIGCODE
 #ifndef DISABLE_SDL2MIXER
         &sound_sdl_module,
 #endif // DISABLE_SDL2MIXER
         &sound_pcsound_module,
+#else
+        &sound_stm32_module,
 #endif
-        NULL,
 };
 
 // Compiled-in music modules:
@@ -99,7 +102,7 @@ static const sound_module_t *sound_modules[] =
 static const music_module_t *music_modules[] =
     {
 
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
 #ifdef _WIN32
         &music_win_module,
 #endif
@@ -137,7 +140,7 @@ static boolean SndDeviceInList(snddevice_t device, const snddevice_t *list,
 // Find and initialize a sound_module_t appropriate for the setting
 // in snd_sfxdevice.
 
-static void InitSfxModule(GameMission_t mission)
+static void InitSfxModule(bool use_sfx_prefix)
 {
     int i;
 
@@ -154,7 +157,7 @@ static void InitSfxModule(GameMission_t mission)
         {
             // Initialize the module
 
-            if (sound_modules[i]->Init(mission))
+            if (sound_modules[i]->Init(use_sfx_prefix))
             {
                 sound_module = sound_modules[i];
                 return;
@@ -260,9 +263,10 @@ void I_InitSound(GameMission_t mission)
 
         if (!nosfx)
         {
-            InitSfxModule(mission);
+            InitSfxModule(true);
+            //InitSfxModule(mission);
         }
-
+#ifdef FEATURE_MUSIC
         if (!nomusic)
         {
             InitMusicModule();
@@ -270,7 +274,7 @@ void I_InitSound(GameMission_t mission)
         }
 
 // We may also have substitute MIDIs we can load.
-#ifdef FEATURE_SOUND
+
         if (!nomusicpacks && music_module != NULL)
         {
             music_packs_active = music_pack_module.Init();
@@ -286,7 +290,7 @@ void I_ShutdownSound(void)
         sound_module->Shutdown();
     }
 
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
     if (music_packs_active)
     {
         music_pack_module.Shutdown();
@@ -318,10 +322,12 @@ void I_UpdateSound(void)
         sound_module->Update();
     }
 
+    #ifdef FEATURE_MUSIC
     if (active_music_module != NULL && active_music_module->Poll != NULL)
     {
         active_music_module->Poll();
     }
+    #endif
 }
 
 static void CheckVolumeSeparation(int *vol, int *sep)
@@ -405,7 +411,7 @@ void I_ShutdownMusic(void)
 
 void I_SetMusicVolume(int volume)
 {
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
     if (music_module != NULL)
     {
         music_module->SetMusicVolume(volume);
@@ -440,7 +446,7 @@ void *I_RegisterSong(void *data, int len)
 // valid substitution for this track. If there is, we set the
 // active_music_module pointer to the music pack module for the
 // duration of this particular track.
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
     if (music_packs_active)
     {
         void *handle;
@@ -504,7 +510,7 @@ boolean I_MusicIsPlaying(void)
 
 void I_BindSoundVariables(void)
 {
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
     M_BindIntVariable("snd_musicdevice", &snd_musicdevice);
     M_BindIntVariable("snd_sfxdevice", &snd_sfxdevice);
     M_BindIntVariable("snd_sbport", &snd_sbport);

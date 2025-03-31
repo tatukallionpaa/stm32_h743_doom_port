@@ -894,7 +894,7 @@ static default_t extra_defaults_list[] =
 
         CONFIG_VARIABLE_INT_HEX(opl_io_port),
 
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
         //!
         // Controls whether libsamplerate support is used for performing
         // sample rate conversions of sound effects.  Support for this
@@ -2676,7 +2676,7 @@ void M_SetConfigDir(const char *dir)
 // the directory if necessary.
 void M_SetMusicPackDir(void)
 {
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
     const char *current_path;
     char *prefdir, *music_pack_path, *readme_path;
 

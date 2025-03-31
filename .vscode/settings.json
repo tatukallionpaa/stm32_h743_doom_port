@@ -24,6 +24,14 @@
         "net_dedicated.h": "c",
         "d_main.h": "c",
         "m_argv.h": "c",
-        "statdump.h": "c"
+        "statdump.h": "c",
+        "i_video.h": "c",
+        "usbh_hid_keybd.h": "c",
+        "d_event.h": "c",
+        "usbh_hid.h": "c",
+        "stm32h7xx_hal_dma.h": "c",
+        "stdbool.h": "c",
+        "rgb_disp.h": "c",
+        "i2s.h": "c"
     }
 }

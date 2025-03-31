@@ -4,10 +4,10 @@
 
 #include <stdbool.h>
 
-#define VGA_LAST_BP_LINE 30
+#define VGA_LAST_BP_LINE 30+1
 
-#define VGA_FIRST_V_LINE 31
-#define VGA_LAST_V_LINE 510
+#define VGA_FIRST_V_LINE 31+1
+#define VGA_LAST_V_LINE 510+1
 
 #define VGA_FIRST_FP_LINE 511
 #define VGA_LAST_FP_LINE 521

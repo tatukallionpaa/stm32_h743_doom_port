@@ -56,10 +56,13 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 void record_cnt(uint32_t cnt);
+void main_sleep_func(void);
 
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define VBUS_FS_Pin GPIO_PIN_3
+#define VBUS_FS_GPIO_Port GPIOE
 #define DAC_DEEM_Pin GPIO_PIN_0
 #define DAC_DEEM_GPIO_Port GPIOA
 #define DAC_MUTE_Pin GPIO_PIN_2
@@ -72,6 +75,7 @@ void record_cnt(uint32_t cnt);
 extern volatile uint32_t g_systime_ms;
 extern volatile uint32_t g_systime_ms_delay;
 extern volatile uint8_t *g_vga_feed_buffer;
+
 
 /* USER CODE END Private defines */
 

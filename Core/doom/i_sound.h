@@ -19,6 +19,7 @@
 
 #ifndef __I_SOUND__
 #define __I_SOUND__
+#include <stdbool.h>
 
 #include "doomtype.h"
 #include "d_mode.h"
@@ -116,7 +117,7 @@ typedef struct
     // Initialise sound module
     // Returns true if successfully initialised
 
-    boolean (*Init)(GameMission_t mission);
+    boolean (*Init)(bool use_sfx_prefix);
 
     // Shutdown sound module
 
@@ -237,7 +238,7 @@ extern int snd_maxslicetime_ms;
 extern char *snd_musiccmd;
 extern int snd_pitchshift;
 extern char *snd_dmxoption;
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
 extern int use_libsamplerate;
 extern float libsamplerate_scale;
 #endif
@@ -256,7 +257,7 @@ void I_OPL_DevMessages(char *, size_t);
 
 // Sound modules
 
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
 void I_InitTimidityConfig(void);
 extern const music_module_t music_opl_module;
 extern const music_module_t music_pack_module;

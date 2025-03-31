@@ -80,7 +80,7 @@ void I_Sleep(int ms)
     uint32_t sleep_start_time = g_systime_ms;
     while (g_systime_ms - sleep_start_time < ms)
     {
-    	__ASM volatile ("nop");
+    	//main_sleep_func();
     }
 
 #endif

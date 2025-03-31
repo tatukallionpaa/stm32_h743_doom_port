@@ -19,12 +19,15 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "fatfs.h"
+#include "usb_host.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "vga.h"
 #include "rgb_disp.h"
 #include "string.h"
+#include "usbh_hid.h"
+#include "i2s.h"
 
 /* USER CODE END Includes */
 
@@ -47,10 +50,12 @@ extern void D_DoomMain(void);
 /* Private variables ---------------------------------------------------------*/
 
 I2S_HandleTypeDef hi2s1;
+DMA_HandleTypeDef hdma_spi1_tx;
 
 SD_HandleTypeDef hsd1;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim8;
 DMA_HandleTypeDef hdma_tim1_up;
@@ -60,12 +65,13 @@ SDRAM_HandleTypeDef hsdram1;
 
 /* USER CODE BEGIN PV */
 FATFS FatFs;
-volatile uint32_t g_systime_ms=0;
-volatile uint32_t g_systime_ms_delay=0;
+volatile uint32_t g_systime_ms = 0;
+volatile uint32_t g_systime_ms_delay = 0;
 volatile uint8_t *g_vga_feed_buffer;
 
 uint8_t *pix_pointer;
-uint8_t *sdram_p = (uint8_t *)SDRAM_BEGINNING;
+uint8_t keys_pressed[255] = {0}; // all elements 0
+uint8_t key_i;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -79,12 +85,15 @@ static void MX_I2S1_Init(void);
 static void MX_FMC_Init(void);
 static void MX_SDMMC1_SD_Init(void);
 static void MX_TIM5_Init(void);
+static void MX_TIM2_Init(void);
+void MX_USB_HOST_Process(void);
+
 /* USER CODE BEGIN PFP */
 
 static void SDIO_SDCard_Read_file_to(uint8_t *file_target);
 static void SDIO_SDCard_Mount(void);
-void two_byte_to_one_byte(uint16_t *buff);
-FRESULT f_CreateFolder(	const TCHAR* path);
+
+
 
 /* USER CODE END PFP */
 
@@ -107,7 +116,9 @@ int main(void)
   /* Enable the CPU Cache */
 
   /* Enable I-Cache---------------------------------------------------------*/
-  SCB_EnableICache();
+
+
+	SCB_EnableICache();
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -138,24 +149,25 @@ int main(void)
   MX_SDMMC1_SD_Init();
   MX_FATFS_Init();
   MX_TIM5_Init();
+  MX_USB_HOST_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Base_Start_IT(&htim2);
 
-   //SDIO_SDCard_Read_file_to(sdram_p);
-  // two_byte_to_one_byte((uint16_t *)sdram_p);
   SDIO_SDCard_Mount();
-   vga_init(&pix_pointer, &hdma_tim1_up, &htim1, &htim5);
-  // rgb_init(pix_pointer, sdram_p, &hdma_memtomem_dma1_stream0);
+  vga_init(&pix_pointer, &hdma_tim1_up, &htim1, &htim5);
 
   rgb_init(pix_pointer, (uint8_t **)&g_vga_feed_buffer, &hdma_memtomem_dma1_stream0);
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
   HAL_TIM_OC_Start_IT(&htim8, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
-  TIM1->CNT = 0;
-  TIM5->CNT = 0;
-  TIM8->CNT = 0;
+  // TIM1->CNT = 0;
+  // TIM5->CNT = 0;
+  // TIM8->CNT = 0;
 
-  // HAL_TIM_Base_Start(&htim8);
+
   HAL_TIM_Base_Start(&htim1);
+  i2s_set_handle(&hi2s1);
 
   D_DoomMain();
 
@@ -165,9 +177,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    // sine_loop();
-    // rgb_push_line();
+
     /* USER CODE END WHILE */
+    MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
   }
@@ -281,7 +293,7 @@ static void MX_I2S1_Init(void)
   hi2s1.Init.Standard = I2S_STANDARD_PHILIPS;
   hi2s1.Init.DataFormat = I2S_DATAFORMAT_16B;
   hi2s1.Init.MCLKOutput = I2S_MCLKOUTPUT_DISABLE;
-  hi2s1.Init.AudioFreq = I2S_AUDIOFREQ_44K;
+  hi2s1.Init.AudioFreq = I2S_AUDIOFREQ_11K;
   hi2s1.Init.CPOL = I2S_CPOL_LOW;
   hi2s1.Init.FirstBit = I2S_FIRSTBIT_MSB;
   hi2s1.Init.WSInversion = I2S_WS_INVERSION_DISABLE;
@@ -317,7 +329,7 @@ static void MX_SDMMC1_SD_Init(void)
   hsd1.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
   hsd1.Init.BusWide = SDMMC_BUS_WIDE_4B;
   hsd1.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
-  hsd1.Init.ClockDiv = 8;
+  hsd1.Init.ClockDiv = 4;
   /* USER CODE BEGIN SDMMC1_Init 2 */
 
   /* USER CODE END SDMMC1_Init 2 */
@@ -368,6 +380,51 @@ static void MX_TIM1_Init(void)
   /* USER CODE BEGIN TIM1_Init 2 */
 
   /* USER CODE END TIM1_Init 2 */
+
+}
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 225;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 4999;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
 
 }
 
@@ -655,14 +712,17 @@ static void MX_GPIO_Init(void)
 /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOG_CLK_ENABLE();
-  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(VBUS_FS_GPIO_Port, VBUS_FS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, DAC_DEEM_Pin|DAC_MUTE_Pin, GPIO_PIN_RESET);
@@ -670,6 +730,13 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, VGA_Pin|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : VBUS_FS_Pin */
+  GPIO_InitStruct.Pin = VBUS_FS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(VBUS_FS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DAC_DEEM_Pin DAC_MUTE_Pin */
   GPIO_InitStruct.Pin = DAC_DEEM_Pin|DAC_MUTE_Pin;
@@ -708,21 +775,21 @@ static void SDIO_SDCard_Read_file_to(uint8_t *file_target)
     }
     //------------------[ Open A Text File For Write & Write Data ]--------------------
     // Open the file
-   /* FR_Status = f_open(&Fil, "pic.bin", FA_READ);
-    if (FR_Status != FR_OK)
-    {
-      break;
-    }
+    /* FR_Status = f_open(&Fil, "pic.bin", FA_READ);
+     if (FR_Status != FR_OK)
+     {
+       break;
+     }
 
-    // (2) Read The Text File's Data [ Using f_read() Function ]
-    FR_Status = f_read(&Fil, file_target, f_size(&Fil), &RWC);
+     // (2) Read The Text File's Data [ Using f_read() Function ]
+     FR_Status = f_read(&Fil, file_target, f_size(&Fil), &RWC);
 
-    // Close The File
-    f_close(&Fil);*/
+     // Close The File
+     f_close(&Fil);*/
 
   } while (0);
   //------------------[ Test Complete! Unmount The SD Card ]--------------------
- // FR_Status = f_mount(NULL, "", 0);
+  // FR_Status = f_mount(NULL, "", 0);
   /*   if (FR_Status != FR_OK)
     {
         sprintf(TxBuffer, "\r\nError! While Un-mounting SD Card, Error Code: (%i)\r\n", FR_Status);
@@ -735,7 +802,7 @@ static void SDIO_SDCard_Read_file_to(uint8_t *file_target)
 
 static void SDIO_SDCard_Mount(void)
 {
-  //FATFS FatFs;
+  // FATFS FatFs;
   FRESULT FR_Status;
 
   //------------------[ Mount The SD Card ]--------------------
@@ -746,48 +813,12 @@ static void SDIO_SDCard_Mount(void)
   }
 }
 
-void two_byte_to_one_byte(uint16_t *buff)
+
+
+void main_sleep_func(void)
 {
-  //  uint32_t size = 640 * 480;
-  uint32_t size = 320 * 240;
-  uint8_t *one_byte_buff = (uint8_t *)buff;
-  uint32_t i = 0;
-  while (i < size)
-  {
-
-    uint16_t rgb = buff[i];
-    //  rgb |= buff[i] << 8;
-
-    uint8_t retval = (rgb >> RSHIFT);
-    retval |= ((rgb & GMASK) >> GSHIFT);
-    retval |= (rgb & BMASK);
-
-    one_byte_buff[i] = retval;
-    i++;
-  }
+  //MX_USB_HOST_Process();
 }
-FRESULT f_CreateFolder(	const TCHAR* path){
-
-	FRESULT fr;
-
-	// Create folder/directory
-	fr = f_mkdir(path);
-	if(fr == FR_OK){
-
-		// Success
-		// TODO: f_mkdir Something to happen when successful
-
-	}
-	else{
-
-		// Error
-		// TODO: f_CreateFolder make directory error
-
-	}
-
-	return fr;
-} // END f_CreateFolder
-
 /* USER CODE END 4 */
 
 /**

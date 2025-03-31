@@ -429,7 +429,7 @@ static boolean ReadTrackHeader(midi_track_t *track, FILE *stream)
     {
         return false;
     }
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
     track->data_len = SDL_SwapBE32(chunk_header.chunk_size);
 #endif
     return true;
@@ -539,7 +539,7 @@ static boolean ReadFileHeader(midi_file_t *file, FILE *stream)
     {
         return false;
     }
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
     if (!CheckChunkHeader(&file->header.chunk_header, HEADER_CHUNK_ID) || SDL_SwapBE32(file->header.chunk_header.chunk_size) != 6)
     {
         fprintf(stderr, "ReadFileHeader: Invalid MIDI chunk header! "
@@ -607,7 +607,7 @@ midi_file_t *MIDI_LoadFile(char *filename)
     }
 
 // Read MIDI file header
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
     if (!ReadFileHeader(file, stream))
     {
         fclose(stream);
@@ -694,7 +694,7 @@ int MIDI_GetNextEvent(midi_track_iter_t *iter, midi_event_t **event)
 
 unsigned int MIDI_GetFileTimeDivision(midi_file_t *file)
 {
-#ifdef FEATURE_SOUND
+#ifdef FEATURE_MUSIC
     short result = SDL_SwapBE16(file->header.time_division);
 #else
 
