@@ -102,7 +102,6 @@ static const sound_module_t *sound_modules[] =
 static const music_module_t *music_modules[] =
     {
 
-#ifdef FEATURE_MUSIC
 #ifdef _WIN32
         &music_win_module,
 #endif
@@ -114,7 +113,6 @@ static const music_module_t *music_modules[] =
 #endif // DISABLE_SDL2MIXER
         &music_opl_module,
 
-#endif
         NULL,
 
 };
@@ -235,8 +233,9 @@ void I_InitSound(GameMission_t mission)
     //
     // Disable music.
     //
-
     nomusic = M_CheckParm("-nomusic") > 0;
+#ifdef USE_MUSIC_PACKS
+
 
     //!
     //
@@ -247,6 +246,7 @@ void I_InitSound(GameMission_t mission)
 
     // Auto configure the music pack directory.
     M_SetMusicPackDir();
+#endif
 
     // Initialize the sound and music subsystems.
 
@@ -264,17 +264,17 @@ void I_InitSound(GameMission_t mission)
         if (!nosfx)
         {
             InitSfxModule(true);
-            //InitSfxModule(mission);
+            // InitSfxModule(mission);
         }
-#ifdef FEATURE_MUSIC
+
         if (!nomusic)
         {
             InitMusicModule();
             active_music_module = music_module;
         }
 
-// We may also have substitute MIDIs we can load.
-
+        // We may also have substitute MIDIs we can load.
+#ifdef USE_MUSIC_PACKS
         if (!nomusicpacks && music_module != NULL)
         {
             music_packs_active = music_pack_module.Init();
@@ -290,7 +290,7 @@ void I_ShutdownSound(void)
         sound_module->Shutdown();
     }
 
-#ifdef FEATURE_MUSIC
+#ifdef USE_MUSIC_PACKS
     if (music_packs_active)
     {
         music_pack_module.Shutdown();
@@ -322,12 +322,10 @@ void I_UpdateSound(void)
         sound_module->Update();
     }
 
-    #ifdef FEATURE_MUSIC
     if (active_music_module != NULL && active_music_module->Poll != NULL)
     {
         active_music_module->Poll();
     }
-    #endif
 }
 
 static void CheckVolumeSeparation(int *vol, int *sep)
@@ -411,17 +409,17 @@ void I_ShutdownMusic(void)
 
 void I_SetMusicVolume(int volume)
 {
-#ifdef FEATURE_MUSIC
     if (music_module != NULL)
     {
         music_module->SetMusicVolume(volume);
 
+#ifdef USE_MUSIC_PACKS
         if (music_packs_active && music_module != &music_pack_module)
         {
             music_pack_module.SetMusicVolume(volume);
         }
-    }
 #endif
+    }
 }
 
 void I_PauseSong(void)
@@ -442,11 +440,12 @@ void I_ResumeSong(void)
 
 void *I_RegisterSong(void *data, int len)
 {
-// If the music pack module is active, check to see if there is a
-// valid substitution for this track. If there is, we set the
-// active_music_module pointer to the music pack module for the
-// duration of this particular track.
-#ifdef FEATURE_MUSIC
+    // If the music pack module is active, check to see if there is a
+    // valid substitution for this track. If there is, we set the
+    // active_music_module pointer to the music pack module for the
+    // duration of this particular track.
+
+#ifdef USE_MUSIC_PACKS
     if (music_packs_active)
     {
         void *handle;
@@ -510,7 +509,6 @@ boolean I_MusicIsPlaying(void)
 
 void I_BindSoundVariables(void)
 {
-#ifdef FEATURE_MUSIC
     M_BindIntVariable("snd_musicdevice", &snd_musicdevice);
     M_BindIntVariable("snd_sfxdevice", &snd_sfxdevice);
     M_BindIntVariable("snd_sbport", &snd_sbport);
@@ -525,8 +523,14 @@ void I_BindSoundVariables(void)
     M_BindIntVariable("opl_io_port", &opl_io_port);
     M_BindIntVariable("snd_pitchshift", &snd_pitchshift);
 
+#ifdef USE_MUSIC_PACKS
     M_BindStringVariable("music_pack_path", &music_pack_path);
+#endif
+
+
+#ifdef USE_TIMIDITY
     M_BindStringVariable("timidity_cfg_path", &timidity_cfg_path);
+#endif
     M_BindStringVariable("gus_patch_path", &gus_patch_path);
     M_BindIntVariable("gus_ram_kb", &gus_ram_kb);
 #ifdef _WIN32
@@ -553,7 +557,8 @@ void I_BindSoundVariables(void)
     M_BindStringVariable("fsynth_sf_path", &fsynth_sf_path);
 #endif // HAVE_FLUIDSYNTH
 
+#ifdef USE_LIBSAMPLERATE
     M_BindIntVariable("use_libsamplerate", &use_libsamplerate);
     M_BindFloatVariable("libsamplerate_scale", &libsamplerate_scale);
-#endif
+#endif // USE_LIBSAMPLERATE
 }

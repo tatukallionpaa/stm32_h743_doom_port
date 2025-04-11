@@ -69,7 +69,7 @@ void I_AtExit(atexit_func_t func, boolean run_on_error)
 {
     atexit_listentry_t *entry;
 
-#ifdef ORIGCODE
+#ifndef ORIGCODE
     entry = malloc(sizeof(*entry));
 #else
     entry = ext_mem_allocate(sizeof(*entry));
@@ -115,7 +115,7 @@ static byte *AutoAllocMemory(int *size, int default_ram, int min_ram)
 
         *size = default_ram * 1024 * 1024;
 
-#ifdef ORIGCODE
+#ifndef ORIGCODE
         zonemem = malloc(*size);
 #else
         zonemem = ext_mem_allocate(*size);

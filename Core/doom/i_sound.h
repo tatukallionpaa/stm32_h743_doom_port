@@ -238,10 +238,9 @@ extern int snd_maxslicetime_ms;
 extern char *snd_musiccmd;
 extern int snd_pitchshift;
 extern char *snd_dmxoption;
-#ifdef FEATURE_MUSIC
 extern int use_libsamplerate;
 extern float libsamplerate_scale;
-#endif
+
 
 void I_BindSoundVariables(void);
 
@@ -257,11 +256,11 @@ void I_OPL_DevMessages(char *, size_t);
 
 // Sound modules
 
-#ifdef FEATURE_MUSIC
+
 void I_InitTimidityConfig(void);
 extern const music_module_t music_opl_module;
 extern const music_module_t music_pack_module;
-#endif
+
 
 extern const sound_module_t sound_sdl_module;
 extern const sound_module_t sound_pcsound_module;

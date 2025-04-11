@@ -42,6 +42,8 @@ static boolean use_sfx_prefix;
 
 static boolean sound_initialized = false;
 
+static void (*music_generator)(int16_t *buffer, uint16_t buffer_capacity);
+
 typedef struct __attribute__((packed)) mobj_s
 {
     byte *ptr;
@@ -67,7 +69,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo, int handle)
 {
     int lumpnum;
     unsigned int lumplen;
-    //int samplerate;
+    // int samplerate;
     unsigned int length;
     byte *data;
 
@@ -88,7 +90,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo, int handle)
 
     // 16 bit sample rate field, 32 bit length field
 
-   // samplerate = (data[3] << 8) | data[2];
+    // samplerate = (data[3] << 8) | data[2];
     length = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
 
     // If the header specifies that the length of the sound is greater than
@@ -283,11 +285,12 @@ static void I_stm32_UpdateSound(void)
         int16_t *buf = i2s_get_empty_buffer(&buffer_token);
         if (buf == NULL)
         {
-        	i2s_clear_buffer_mutex();
+            i2s_clear_buffer_mutex();
             return;
         }
+        music_generator(buf, BUFFER_SLICE_SIZE);
 
-        for (int i = 0; i < BUFFER_SLICE_SIZE / 2; i++)
+        for (int i = 0; i < BUFFER_SLICE_SIZE / 2; i += 4)
         {
             int16_t sample_l = 0;
             int16_t sample_r = 0;
@@ -309,20 +312,25 @@ static void I_stm32_UpdateSound(void)
                 }
             }
 
-            if (channels_null){
-            	 i2s_clear_buffer_mutex();
+            if (channels_null)
+            {
+                i2s_clear_buffer_mutex();
                 return;
             }
 
             buf[i * 2] = sample_l;
             buf[i * 2 + 1] = sample_r;
+            buf[i * 2 + 2] = sample_l;
+            buf[i * 2 + 3] = sample_r;
+            buf[i * 2 + 4] = sample_l;
+            buf[i * 2 + +5] = sample_r;
+            buf[i * 2 + 6] = sample_l;
+            buf[i * 2 + 7] = sample_r;
             i2s_buffer_filled(buffer_token);
         }
     }
     i2s_clear_buffer_mutex();
 }
-
-
 
 static snddevice_t sound_sdl_devices[] =
     {
@@ -353,3 +361,13 @@ sound_module_t sound_stm32_module =
         I_stm32_SoundIsPlaying,
         I_stm32_PrecacheSounds,
 };
+
+void I_stm32_sound_set_music_gen(void (*generator)(int16_t *buffer, uint16_t buffer_capacity))
+{
+    music_generator = generator;
+}
+
+bool i_stm32_sound_is_init(void)
+{
+    return sound_initialized;
+}

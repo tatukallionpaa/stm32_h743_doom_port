@@ -99,4 +99,6 @@
 /* Define to the directory where all game files are located */
 #define FILES_DIR "0:/doom"
 
+#define DISABLE_SDL2MIXER 1
+
 #define DISABLE_SDL2NET

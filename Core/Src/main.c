@@ -90,7 +90,6 @@ void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
 
-static void SDIO_SDCard_Read_file_to(uint8_t *file_target);
 static void SDIO_SDCard_Mount(void);
 
 
@@ -116,14 +115,15 @@ int main(void)
   /* Enable the CPU Cache */
 
   /* Enable I-Cache---------------------------------------------------------*/
-
-
-	SCB_EnableICache();
+  SCB_EnableICache();
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+
+  /* Configure The Vector Table address */
+  SCB->VTOR = 0x08000000;
 
   /* USER CODE BEGIN Init */
 
@@ -293,7 +293,7 @@ static void MX_I2S1_Init(void)
   hi2s1.Init.Standard = I2S_STANDARD_PHILIPS;
   hi2s1.Init.DataFormat = I2S_DATAFORMAT_16B;
   hi2s1.Init.MCLKOutput = I2S_MCLKOUTPUT_DISABLE;
-  hi2s1.Init.AudioFreq = I2S_AUDIOFREQ_11K;
+  hi2s1.Init.AudioFreq = I2S_AUDIOFREQ_44K;
   hi2s1.Init.CPOL = I2S_CPOL_LOW;
   hi2s1.Init.FirstBit = I2S_FIRSTBIT_MSB;
   hi2s1.Init.WSInversion = I2S_WS_INVERSION_DISABLE;
@@ -759,46 +759,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-static void SDIO_SDCard_Read_file_to(uint8_t *file_target)
-{
-  FATFS FatFs;
-  FIL Fil;
-  FRESULT FR_Status;
-  UINT RWC;
-  do
-  {
-    //------------------[ Mount The SD Card ]--------------------
-    FR_Status = f_mount(&FatFs, SDPath, 1);
-    if (FR_Status != FR_OK)
-    {
-      break;
-    }
-    //------------------[ Open A Text File For Write & Write Data ]--------------------
-    // Open the file
-    /* FR_Status = f_open(&Fil, "pic.bin", FA_READ);
-     if (FR_Status != FR_OK)
-     {
-       break;
-     }
-
-     // (2) Read The Text File's Data [ Using f_read() Function ]
-     FR_Status = f_read(&Fil, file_target, f_size(&Fil), &RWC);
-
-     // Close The File
-     f_close(&Fil);*/
-
-  } while (0);
-  //------------------[ Test Complete! Unmount The SD Card ]--------------------
-  // FR_Status = f_mount(NULL, "", 0);
-  /*   if (FR_Status != FR_OK)
-    {
-        sprintf(TxBuffer, "\r\nError! While Un-mounting SD Card, Error Code: (%i)\r\n", FR_Status);
-        USB_CDC_Print(TxBuffer);
-    } else{
-        sprintf(TxBuffer, "\r\nSD Card Un-mounted Successfully! \r\n");
-        USB_CDC_Print(TxBuffer);
-    } */
-}
 
 static void SDIO_SDCard_Mount(void)
 {
