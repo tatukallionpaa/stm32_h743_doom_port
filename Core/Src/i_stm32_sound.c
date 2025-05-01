@@ -290,7 +290,11 @@ static void I_stm32_UpdateSound(void)
         }
         music_generator(buf, BUFFER_SLICE_SIZE);
 
+#if I2S_AUDIO_SAMPLE_RATE == 44000
         for (int i = 0; i < BUFFER_SLICE_SIZE / 2; i += 4)
+#else
+        for (int i = 0; i < BUFFER_SLICE_SIZE / 2; i += 1)
+#endif
         {
             int16_t sample_l = 0;
             int16_t sample_r = 0;
@@ -318,14 +322,16 @@ static void I_stm32_UpdateSound(void)
                 return;
             }
 
-            buf[i * 2] = sample_l;
-            buf[i * 2 + 1] = sample_r;
-            buf[i * 2 + 2] = sample_l;
-            buf[i * 2 + 3] = sample_r;
-            buf[i * 2 + 4] = sample_l;
-            buf[i * 2 + +5] = sample_r;
-            buf[i * 2 + 6] = sample_l;
-            buf[i * 2 + 7] = sample_r;
+            buf[i * 2] += sample_l;
+            buf[i * 2 + 1] += sample_r;
+#if I2S_AUDIO_SAMPLE_RATE == 44000
+            buf[i * 2 + 2] += sample_l;
+            buf[i * 2 + 3] += sample_r;
+            buf[i * 2 + 4] += sample_l;
+            buf[i * 2 + 5] += sample_r;
+            buf[i * 2 + 6] += sample_l;
+            buf[i * 2 + 7] += sample_r;
+#endif
             i2s_buffer_filled(buffer_token);
         }
     }

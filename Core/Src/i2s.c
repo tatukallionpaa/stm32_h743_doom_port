@@ -42,7 +42,7 @@ void start_i2s(void)
     memset(audio_buffer, 0, BUFFER_SLICE_SIZE * BUFFER_SLICES * AUDIO_SAMPLE_SIZE);
   //  buffer_slice_states[slice_playing] = BUF_PLAYING;
    // buffer_slice_states[slice_playing + 1] = BUF_QUEUED;
-    HAL_I2S_Transmit_DMA(i2s_handle_p, audio_buffer, BUFFER_SLICE_SIZE * BUFFER_SLICES);
+    HAL_I2S_Transmit_DMA(i2s_handle_p, (uint16_t*)audio_buffer, BUFFER_SLICE_SIZE * BUFFER_SLICES);
     i2s_started = true;
 }
 
@@ -63,12 +63,12 @@ void i2s_buffer_housekeeping(void)
     {
         if (buffer_slice_states[n] == BUF_PLAYING && n != playing_slice_index)
         {
-            memset(&audio_buffer[n * BUFFER_SLICE_SIZE], 0, BUFFER_SLICE_SIZE * AUDIO_SAMPLE_SIZE);
+           // memset(&audio_buffer[n * BUFFER_SLICE_SIZE], 0, BUFFER_SLICE_SIZE * AUDIO_SAMPLE_SIZE);
             buffer_slice_states[n] = BUF_EMPTY;
         }
         if (buffer_slice_states[n] == BUF_QUEUED && n != (playing_slice_index + 1) % BUFFER_SLICES)
         {
-            memset(&audio_buffer[n * BUFFER_SLICE_SIZE], 0, BUFFER_SLICE_SIZE * AUDIO_SAMPLE_SIZE);
+            //memset(&audio_buffer[n * BUFFER_SLICE_SIZE], 0, BUFFER_SLICE_SIZE * AUDIO_SAMPLE_SIZE);
             buffer_slice_states[n] = BUF_EMPTY;
         }
     }

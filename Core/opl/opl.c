@@ -631,8 +631,8 @@ opl_init_result_t OPL_Init(unsigned int port_base)
 #ifndef ORIGCODE
     driver = drivers[0];
     driver->init_func(0);
-    //return OPL_INIT_OPL2;
-    return OPL_INIT_OPL3;
+    //return OPL_INIT_OPL3;
+    return OPL_INIT_OPL2;
 #else
     char *driver_name;
     int i;

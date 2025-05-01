@@ -13,11 +13,11 @@ extern "C" {
 // Audio buffer configuration
 #define AUDIO_BUFFER_ADDRESS 0x38000000
 
-#define BUFFER_SLICE_SIZE 2048
+#define BUFFER_SLICE_SIZE 3200
 #define BUFFER_SLICES 10
 #define BUFFER_TOTAL_SIZE (BUFFER_SLICE_SIZE * BUFFER_SLICES)
 #define AUDIO_SAMPLE_SIZE 2
-#define I2S_AUDIO_SAMPLE_RATE 44000
+#define I2S_AUDIO_SAMPLE_RATE 11000
 
 
 // Enum for buffer slice states

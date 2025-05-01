@@ -69,6 +69,8 @@ void main_sleep_func(void);
 #define DAC_MUTE_GPIO_Port GPIOA
 #define VGA_Pin GPIO_PIN_0
 #define VGA_GPIO_Port GPIOB
+#define LED_PIN_Pin GPIO_PIN_7
+#define LED_PIN_GPIO_Port GPIOH
 
 /* USER CODE BEGIN Private defines */
 

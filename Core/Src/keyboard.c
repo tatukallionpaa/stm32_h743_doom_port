@@ -7,7 +7,6 @@
 #define KEYS_IN_INFO 6
 
 static uint8_t prev_keys[KEYS_IN_INFO] = {0, 0, 0, 0, 0, 0};
-static uint8_t key_i = 0;
 static const int key_to_doomkey[] = SCANCODE_TO_KEYS_ARRAY;
 static uint8_t prev_lctrl = 0;
 static uint8_t prev_lshift = 0;

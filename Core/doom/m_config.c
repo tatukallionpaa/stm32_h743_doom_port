@@ -49,7 +49,9 @@
 
 const char *configdir;
 
+#ifdef ORIGCODE
 static char *autoload_path = "";
+#endif
 
 // Default filenames for configuration files.
 

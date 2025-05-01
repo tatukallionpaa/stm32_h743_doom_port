@@ -1075,7 +1075,7 @@ void I_InitGraphics(void)
 {
     I_VideoBuffer = (byte *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
     g_vga_feed_buffer = (byte *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT_4_3, PU_STATIC, NULL);
-    memset(g_vga_feed_buffer,0,SCREENWIDTH * SCREENHEIGHT_4_3);
+    memset((void*)g_vga_feed_buffer,0,SCREENWIDTH * SCREENHEIGHT_4_3);
 }
 
 // Bind all variables controlling video options into the configuration

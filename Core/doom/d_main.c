@@ -1269,6 +1269,7 @@ static void G_CheckDemoStatusAtExit(void)
 //
 void D_DoomMain(void)
 {
+
     int p;
     char file[256];
     char demolumpname[9];
@@ -1281,6 +1282,8 @@ void D_DoomMain(void)
 
     DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init();
+
+
 
     //!
     // @category net
@@ -1436,7 +1439,6 @@ void D_DoomMain(void)
     // Turbo mode.  The player's speed is multiplied by x%.  If unspecified,
     // x defaults to 200.  Values are rounded up to 10 and down to 400.
     //
-
     if ((p = M_CheckParm("-turbo")))
     {
         int scale = 200;
@@ -1489,6 +1491,7 @@ void D_DoomMain(void)
     // we're playing and which version of Vanilla Doom we need to emulate.
     D_IdentifyVersion();
     InitGameVersion();
+
 
     // Check which IWAD variant we are using.
 
@@ -1676,6 +1679,7 @@ void D_DoomMain(void)
     // Generate the WAD hash table.  Speed things up a bit.
     W_GenerateHashTable();
 
+
     // Load DEHACKED lumps from WAD files - but only if we give the right
     // command line parameter.
 
@@ -1749,13 +1753,13 @@ void D_DoomMain(void)
 
     I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
-
     DEH_printf("I_Init: Setting up machine state.\n");
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
     I_InitSound(doom);
     I_InitMusic();
+
 
 #ifdef FEATURE_MULTIPLAYER
     printf("NET_Init: Init network subsystem.\n");
@@ -1903,6 +1907,7 @@ void D_DoomMain(void)
         // Not loading a game
         startloadgame = -1;
     }
+
 
     DEH_printf("M_Init: Init miscellaneous info.\n");
     M_Init();

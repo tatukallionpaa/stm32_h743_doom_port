@@ -19,6 +19,7 @@
 #include "opl_queue.h"
 #include "i2s.h"
 #include "i_stm32_sound.h"
+#include "opl_woody.h"
 
 #define MAX_SOUND_SLICE_TIME 100 /* ms */
 
@@ -32,7 +33,7 @@ typedef struct
 
 #define OPL_OP3MODE 0
 // static OPL *emu8950_opl;
-static opl3_chip opl_chip;
+//static opl3_chip opl_chip;
 
 static bool callback_mutex;
 static bool callback_queue_mutex;
@@ -131,7 +132,7 @@ extern uint8_t restart_song_state;
 void OPL_Stm32_Mix_callback(int16_t *buffer, uint16_t buffer_capacity)
 {
 
-    uint16_t buffer_samples = buffer_capacity / 4;
+    uint16_t buffer_samples = buffer_capacity / 2;
     uint16_t filled = 0;
 
     while (filled < buffer_samples)
@@ -167,8 +168,15 @@ void OPL_Stm32_Mix_callback(int16_t *buffer, uint16_t buffer_capacity)
         /*if(nsamples<=0){
             return;
         }*/
-
-        OPL3_GenerateStream(&opl_chip, (Bit16s *)(buffer + filled * 4), (Bit32u)nsamples);
+        // adlib_getsample((Bit16s *)(buffer + filled * 4), (Bits)nsamples);
+        int16_t *sndptr = (Bit16s *)(buffer + filled * 2);
+        // todo store in stereo?
+        adlib_getsample(sndptr, nsamples);
+        for (int i = nsamples - 1; i >= 0; i--)
+        {
+            sndptr[i * 2] = sndptr[i * 2 + 1] = sndptr[i];
+        }
+        // OPL3_GenerateStream(&opl_chip, (Bit16s *)(buffer + filled * 4), (Bit32u)nsamples);
         // FillBuffer(buffer + filled * 2, nsamples);
         filled += nsamples;
 
@@ -201,7 +209,9 @@ static int OPL_Stm32_Init(unsigned int port_base)
         current_time_us = 0;
 
         // emu8950_opl = OPL_new(3579552, I2S_AUDIO_SAMPLE_RATE);
-        OPL3_Reset(&opl_chip, I2S_AUDIO_SAMPLE_RATE);
+        adlib_init(I2S_AUDIO_SAMPLE_RATE);
+        // OPL3_Reset(&opl_chip, I2S_AUDIO_SAMPLE_RATE);
+        // OPL3_Reset(&opl_chip, 49716);
 
         I_stm32_sound_set_music_gen(OPL_Stm32_Mix_callback);
         audio_was_initialized = true;
@@ -294,7 +304,8 @@ static void WriteRegister(unsigned int reg_num, unsigned int value)
 #endif
     default:
 
-        OPL3_WriteRegBuffered(&opl_chip, reg_num, value);
+        adlib_write(reg_num, value);
+        // OPL3_WriteRegBuffered(&opl_chip, reg_num, value);
         break;
     }
 }

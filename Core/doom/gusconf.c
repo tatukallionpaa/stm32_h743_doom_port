@@ -230,9 +230,9 @@ static boolean WriteTimidityConfig(char *path, gus_config_t *config)
     unsigned int i;
 
    // fstream = M_fopen(path, "w");
-    f_open(&fstream,path,FA_OPEN_ALWAYS|FA_WRITE);
+    //f_open(&fstream,path,FA_OPEN_ALWAYS|FA_WRITE);
 
-    if (&fstream == NULL)
+    if (f_open(&fstream,path,FA_OPEN_ALWAYS|FA_WRITE)!=FR_OK)
     {
         return false;
     }

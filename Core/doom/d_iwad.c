@@ -634,6 +634,7 @@ static void AddIWADPath(const char *path, const char *suffix)
 // using standard environment variables. See the XDG Base Directory
 // Specification:
 // <http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html>
+#ifdef ORIGCODE
 static void AddXdgDirs(void)
 {
     const char *env;
@@ -691,6 +692,7 @@ static void AddXdgDirs(void)
     // Classic WADs.
     AddIWADPath(env, "/games/doom3bfg/base/wads");
 }
+#endif
 
 #ifndef __MACOSX__
 // Steam on Linux allows installing some select Windows games,
@@ -698,6 +700,7 @@ static void AddXdgDirs(void)
 // could parse *.vdf files to more accurately detect installation
 // locations, but the defaults are likely to be good enough for just
 // about everyone.
+#ifdef ORIGCODE
 static void AddSteamDirs(void)
 {
     const char *homedir;
@@ -722,6 +725,7 @@ static void AddSteamDirs(void)
     AddIWADPath(steampath, "/Strife");
     free(steampath);
 }
+#endif
 #endif // __MACOSX__
 #endif // !_WIN32
 
