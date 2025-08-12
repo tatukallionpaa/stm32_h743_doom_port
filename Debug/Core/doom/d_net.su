@@ -1,0 +1,7 @@
+../Core/doom/d_net.c:43:13:PlayerQuitGame	24	static
+../Core/doom/d_net.c:69:13:RunTic	24	static
+../Core/doom/d_net.c:105:13:LoadGameSettings	24	static
+../Core/doom/d_net.c:136:13:SaveGameSettings	16	static
+../Core/doom/d_net.c:157:13:InitConnectData	24	static
+../Core/doom/d_net.c:223:6:D_ConnectNetGame	80	static
+../Core/doom/d_net.c:248:6:D_CheckNetGame	120	static

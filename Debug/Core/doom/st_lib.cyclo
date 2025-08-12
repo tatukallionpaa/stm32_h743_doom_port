@@ -1,0 +1,10 @@
+../Core/doom/st_lib.c:45:6:STlib_init	2
+../Core/doom/st_lib.c:56:1:STlib_initNum	1
+../Core/doom/st_lib.c:81:1:STlib_drawNum	12
+../Core/doom/st_lib.c:143:1:STlib_updateNum	2
+../Core/doom/st_lib.c:153:1:STlib_initPercent	1
+../Core/doom/st_lib.c:170:1:STlib_updatePercent	3
+../Core/doom/st_lib.c:183:1:STlib_initMultIcon	1
+../Core/doom/st_lib.c:202:1:STlib_updateMultIcon	6
+../Core/doom/st_lib.c:235:1:STlib_initBinIcon	1
+../Core/doom/st_lib.c:254:1:STlib_updateBinIcon	5

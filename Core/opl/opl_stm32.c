@@ -10,7 +10,7 @@
 #include <errno.h>
 #include <assert.h>
 
-// #include "emu8950.h"
+#include "emu8950.h"
 
 #include "opl.h"
 #include "opl_internal.h"
@@ -21,7 +21,14 @@
 #include "i_stm32_sound.h"
 #include "opl_woody.h"
 
+#include "comp_settings.h"
+
 #define MAX_SOUND_SLICE_TIME 100 /* ms */
+
+#if USE_EMU8950_OPL
+#define opl_op3mode 0
+static OPL *emu8950_opl;
+#endif
 
 typedef struct
 {
@@ -33,7 +40,9 @@ typedef struct
 
 #define OPL_OP3MODE 0
 // static OPL *emu8950_opl;
-//static opl3_chip opl_chip;
+#if USE_OPL3
+static opl3_chip opl_chip;
+#endif
 
 static bool callback_mutex;
 static bool callback_queue_mutex;
@@ -161,6 +170,8 @@ void OPL_Stm32_Mix_callback(int16_t *buffer, uint16_t buffer_capacity)
             {
                 nsamples = buffer_samples - filled;
             }
+            if(nsamples>1024)
+                nsamples =1024;
         }
 
         Stm32_UnlockMutex(&callback_queue_mutex);
@@ -170,14 +181,23 @@ void OPL_Stm32_Mix_callback(int16_t *buffer, uint16_t buffer_capacity)
         }*/
         // adlib_getsample((Bit16s *)(buffer + filled * 4), (Bits)nsamples);
         int16_t *sndptr = (Bit16s *)(buffer + filled * 2);
-        // todo store in stereo?
+// todo store in stereo?
+#if USE_WOODY_OPL
         adlib_getsample(sndptr, nsamples);
         for (int i = nsamples - 1; i >= 0; i--)
         {
             sndptr[i * 2] = sndptr[i * 2 + 1] = sndptr[i];
         }
-        // OPL3_GenerateStream(&opl_chip, (Bit16s *)(buffer + filled * 4), (Bit32u)nsamples);
-        // FillBuffer(buffer + filled * 2, nsamples);
+#elif USE_EMU8950_OPL
+        OPL_calc_buffer_stereo(emu8950_opl,sndptr,nsamples);
+        /*for (int i = 0 ; i <(nsamples*2); i+=2)
+        {
+            //sndptr[i]=OPL_calc(emu8950_opl);
+            sndptr[i+1]=sndptr[i];
+        }*/
+#elif USE_OPL3
+        OPL3_GenerateStream(&opl_chip, (Bit16s *)(buffer + filled * 4), (Bit32u)nsamples);
+#endif
         filled += nsamples;
 
         AdvanceTime(nsamples);
@@ -207,12 +227,15 @@ static int OPL_Stm32_Init(unsigned int port_base)
         pause_offset = 0;
         callback_queue = OPL_Queue_Create();
         current_time_us = 0;
-
-        // emu8950_opl = OPL_new(3579552, I2S_AUDIO_SAMPLE_RATE);
+#if USE_EMU8950_OPL
+        //emu8950_opl = OPL_new(3579552, I2S_AUDIO_SAMPLE_RATE);
+        emu8950_opl = OPL_new(3579552, 3579552/72);
+#elif USE_WOODY_OPL
         adlib_init(I2S_AUDIO_SAMPLE_RATE);
-        // OPL3_Reset(&opl_chip, I2S_AUDIO_SAMPLE_RATE);
+#elif USE_OPL3
+        OPL3_Reset(&opl_chip, I2S_AUDIO_SAMPLE_RATE);
         // OPL3_Reset(&opl_chip, 49716);
-
+#endif
         I_stm32_sound_set_music_gen(OPL_Stm32_Mix_callback);
         audio_was_initialized = true;
     }
@@ -304,8 +327,13 @@ static void WriteRegister(unsigned int reg_num, unsigned int value)
 #endif
     default:
 
+#if USE_WOODY_OPL
         adlib_write(reg_num, value);
-        // OPL3_WriteRegBuffered(&opl_chip, reg_num, value);
+#elif USE_EMU8950_OPL
+        OPL_writeReg(emu8950_opl,reg_num,value);
+#elif USE_OPL3
+        OPL3_WriteRegBuffered(&opl_chip, reg_num, value);
+#endif
         break;
     }
 }

@@ -1,0 +1,9 @@
+../Core/doom/m_controls.c:230:6:M_BindBaseControls	8	static
+../Core/doom/m_controls.c:271:6:M_BindHereticControls	8	static
+../Core/doom/m_controls.c:309:6:M_BindHexenControls	8	static
+../Core/doom/m_controls.c:325:6:M_BindStrifeControls	8	static
+../Core/doom/m_controls.c:360:6:M_BindWeaponControls	8	static
+../Core/doom/m_controls.c:381:6:M_BindMapControls	8	static
+../Core/doom/m_controls.c:397:6:M_BindMenuControls	8	static
+../Core/doom/m_controls.c:428:6:M_BindChatControls	56	static
+../Core/doom/m_controls.c:447:6:M_ApplyPlatformDefaults	4	static

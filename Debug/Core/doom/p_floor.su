@@ -1,0 +1,4 @@
+../Core/doom/p_floor.c:44:1:T_MovePlane	32	static
+../Core/doom/p_floor.c:204:6:T_MoveFloor	40	static
+../Core/doom/p_floor.c:253:1:EV_DoFloor	48	static
+../Core/doom/p_floor.c:447:1:EV_BuildStairs	64	static

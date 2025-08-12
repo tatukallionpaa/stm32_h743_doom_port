@@ -1,0 +1,7 @@
+../Core/doom/m_argv.c:44:5:M_CheckParmWithArgs	24	static
+../Core/doom/m_argv.c:67:9:M_ParmExists	16	static
+../Core/doom/m_argv.c:72:5:M_CheckParm	16	static
+../Core/doom/m_argv.c:79:13:LoadResponseFile	16	static
+../Core/doom/m_argv.c:274:6:M_FindResponseFile	24	static
+../Core/doom/m_argv.c:542:13:M_GetExecutableName	8	static
+../Core/doom/m_argv.c:549:6:M_SetExeDir	16	static

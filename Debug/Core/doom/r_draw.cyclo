@@ -1,0 +1,13 @@
+../Core/doom/r_draw.c:102:6:R_DrawColumn	5
+../Core/doom/r_draw.c:208:6:R_DrawColumnLow	5
+../Core/doom/r_draw.c:283:6:R_DrawFuzzColumn	8
+../Core/doom/r_draw.c:334:6:R_DrawFuzzColumnLow	8
+../Core/doom/r_draw.c:408:6:R_DrawTranslatedColumn	5
+../Core/doom/r_draw.c:452:6:R_DrawTranslatedColumnLow	5
+../Core/doom/r_draw.c:514:6:R_InitTranslationTables	4
+../Core/doom/r_draw.c:574:6:R_DrawSpan	5
+../Core/doom/r_draw.c:703:6:R_DrawSpanLow	5
+../Core/doom/r_draw.c:761:1:R_InitBuffer	4
+../Core/doom/r_draw.c:796:6:R_FillBackScreen	11
+../Core/doom/r_draw.c:903:1:R_VideoErase	2
+../Core/doom/r_draw.c:925:6:R_DrawViewBorder	5

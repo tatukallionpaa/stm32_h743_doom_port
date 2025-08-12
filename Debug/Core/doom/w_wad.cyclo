@@ -1,0 +1,15 @@
+../Core/doom/w_wad.c:74:14:W_LumpNameHash	4
+../Core/doom/w_wad.c:103:13:W_AddFile	9
+../Core/doom/w_wad.c:249:5:W_NumLumps	1
+../Core/doom/w_wad.c:261:13:W_CheckNumForName	6
+../Core/doom/w_wad.c:310:13:W_GetNumForName	1
+../Core/doom/w_wad.c:329:5:W_LumpLength	1
+../Core/doom/w_wad.c:346:6:W_ReadLump	1
+../Core/doom/w_wad.c:384:7:W_CacheLumpNum	3
+../Core/doom/w_wad.c:431:7:W_CacheLumpName	1
+../Core/doom/w_wad.c:446:6:W_ReleaseLumpNum	2
+../Core/doom/w_wad.c:467:6:W_ReleaseLumpName	1
+../Core/doom/w_wad.c:540:6:W_GenerateHashTable	5
+../Core/doom/w_wad.c:582:6:W_Reload	4
+../Core/doom/w_wad.c:621:13:W_WadNameForLump	1
+../Core/doom/w_wad.c:626:9:W_IsIWADLump	1

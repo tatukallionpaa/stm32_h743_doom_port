@@ -1,0 +1,8 @@
+../Core/opl/opl_queue.c:40:23:OPL_Queue_Create	1
+../Core/opl/opl_queue.c:50:6:OPL_Queue_Destroy	1
+../Core/opl/opl_queue.c:55:5:OPL_Queue_IsEmpty	1
+../Core/opl/opl_queue.c:60:6:OPL_Queue_Clear	1
+../Core/opl/opl_queue.c:65:6:OPL_Queue_Push	5
+../Core/opl/opl_queue.c:114:5:OPL_Queue_Pop	8
+../Core/opl/opl_queue.c:192:10:OPL_Queue_Peek	2
+../Core/opl/opl_queue.c:204:6:OPL_Queue_AdjustCallbacks	2

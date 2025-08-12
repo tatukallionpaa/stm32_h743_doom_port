@@ -1,0 +1,9 @@
+../Core/doom/i_cdmus.c:31:5:I_CDMusInit	8	static
+../Core/doom/i_cdmus.c:43:6:I_CDMusPrintStartup	4	static
+../Core/doom/i_cdmus.c:47:5:I_CDMusPlay	16	static
+../Core/doom/i_cdmus.c:52:5:I_CDMusStop	4	static
+../Core/doom/i_cdmus.c:57:5:I_CDMusResume	4	static
+../Core/doom/i_cdmus.c:62:5:I_CDMusSetVolume	16	static
+../Core/doom/i_cdmus.c:67:5:I_CDMusFirstTrack	4	static
+../Core/doom/i_cdmus.c:72:5:I_CDMusLastTrack	4	static
+../Core/doom/i_cdmus.c:77:5:I_CDMusTrackLength	16	static

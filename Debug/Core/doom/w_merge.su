@@ -1,0 +1,15 @@
+../Core/doom/w_merge.c:71:12:FindInList	24	static
+../Core/doom/w_merge.c:84:16:SetupList	32	static
+../Core/doom/w_merge.c:120:13:SetupLists	16	static
+../Core/doom/w_merge.c:143:13:InitSpriteList	8	static
+../Core/doom/w_merge.c:155:16:ValidSpriteLumpName	16	static
+../Core/doom/w_merge.c:182:24:FindSpriteFrame	32	static
+../Core/doom/w_merge.c:232:16:SpriteLumpNeeded	32	static
+../Core/doom/w_merge.c:296:13:AddSpriteLump	32	static
+../Core/doom/w_merge.c:345:13:GenerateSpriteList	16	static
+../Core/doom/w_merge.c:386:13:DoMerge	40	static
+../Core/doom/w_merge.c:555:6:W_PrintDirectory	16	static
+../Core/doom/w_merge.c:570:6:W_MergeFile	24	static
+../Core/doom/w_merge.c:604:13:W_NWTAddLumps	24	static
+../Core/doom/w_merge.c:627:6:W_NWTMergeFile	24	static
+../Core/doom/w_merge.c:673:6:W_NWTDashMerge	32	static

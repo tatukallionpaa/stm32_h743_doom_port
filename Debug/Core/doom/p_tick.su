@@ -1,0 +1,6 @@
+../Core/doom/p_tick.c:46:6:P_InitThinkers	4	static
+../Core/doom/p_tick.c:58:6:P_AddThinker	16	static
+../Core/doom/p_tick.c:73:6:P_RemoveThinker	16	static
+../Core/doom/p_tick.c:85:6:P_AllocateThinker	16	static
+../Core/doom/p_tick.c:94:6:P_RunThinkers	16	static
+../Core/doom/p_tick.c:125:6:P_Ticker	16	static

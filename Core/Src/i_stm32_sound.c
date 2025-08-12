@@ -35,6 +35,7 @@
 
 #include "doomtype.h"
 #include "i_stm32_sound.h"
+#include "comp_settings.h"
 
 #define NUM_CHANNELS 16
 
@@ -279,16 +280,20 @@ static void I_stm32_UpdateSound(void)
         return;
 
     i2s_set_buffer_mutex();
-    while (1)
+    int16_t *buf;
+    uint8_t buffer_token;
+    if (i2s_get_empty_buffer(&buffer_token, &buf))
     {
-        uint8_t buffer_token;
-        int16_t *buf = i2s_get_empty_buffer(&buffer_token);
+        /*
         if (buf == NULL)
         {
             i2s_clear_buffer_mutex();
             return;
-        }
+        }*/
+        memset((void *)buf, 0, BUFFER_SLICE_SIZE * sizeof(int16_t));
+#if !NO_MUSIC
         music_generator(buf, BUFFER_SLICE_SIZE);
+#endif
 
 #if I2S_AUDIO_SAMPLE_RATE == 44000
         for (int i = 0; i < BUFFER_SLICE_SIZE / 2; i += 4)
@@ -298,13 +303,13 @@ static void I_stm32_UpdateSound(void)
         {
             int16_t sample_l = 0;
             int16_t sample_r = 0;
-            bool channels_null = true;
+            bool sfx_channels_null = true;
             for (int j = 0; j < NUM_CHANNELS; j++)
             {
                 channel_data_t ch = channels[j];
                 if (ch.ptr != NULL)
                 {
-                    channels_null = false;
+                    sfx_channels_null = false;
                     int16_t sample = ch.ptr[ch.pos] - 128;
                     channels[j].pos++;
                     if (channels[j].pos >= ch.len)
@@ -316,10 +321,9 @@ static void I_stm32_UpdateSound(void)
                 }
             }
 
-            if (channels_null)
+            if (sfx_channels_null)
             {
-                i2s_clear_buffer_mutex();
-                return;
+                break;
             }
 
             buf[i * 2] += sample_l;
@@ -332,8 +336,10 @@ static void I_stm32_UpdateSound(void)
             buf[i * 2 + 6] += sample_l;
             buf[i * 2 + 7] += sample_r;
 #endif
-            i2s_buffer_filled(buffer_token);
+
+            // i2s_buffer_filled(buffer_token);
         }
+        i2s_buffer_filled(buffer_token);
     }
     i2s_clear_buffer_mutex();
 }

@@ -42,7 +42,11 @@
         "compare": "c",
         "errno.h": "c",
         "opl_woody.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "math.h": "c",
+        "cstdint": "c",
+        "emu8950.h": "c",
+        "comp_settings.h": "c"
     },
     "C_Cpp.dimInactiveRegions": true
 }

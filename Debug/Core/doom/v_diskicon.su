@@ -1,0 +1,7 @@
+../Core/doom/v_diskicon.c:48:13:CopyRegion	40	static
+../Core/doom/v_diskicon.c:64:13:SaveDiskData	40	static
+../Core/doom/v_diskicon.c:98:6:V_EnableLoadingDisk	24	static
+../Core/doom/v_diskicon.c:115:6:V_BeginRead	16	static
+../Core/doom/v_diskicon.c:120:17:DiskRegionPointer	4	static
+../Core/doom/v_diskicon.c:127:6:V_DrawDiskIcon	24	static
+../Core/doom/v_diskicon.c:146:6:V_RestoreDiskBackground	16	static

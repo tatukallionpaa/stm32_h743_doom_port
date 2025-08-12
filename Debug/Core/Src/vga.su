@@ -1,0 +1,2 @@
+../Core/Src/vga.c:16:6:vga_init	24	static
+../Core/Src/vga.c:34:44:vga_state_machine	16	static

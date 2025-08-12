@@ -1,0 +1,5 @@
+../Core/doom/i_joystick.c:178:6:I_InitGamepad	1
+../Core/doom/i_joystick.c:453:6:I_ShutdownJoystick	1
+../Core/doom/i_joystick.c:525:6:I_InitJoystick	1
+../Core/doom/i_joystick.c:773:6:I_UpdateJoystick	1
+../Core/doom/i_joystick.c:802:6:I_BindJoystickVariables	1

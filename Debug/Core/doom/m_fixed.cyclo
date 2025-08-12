@@ -1,0 +1,2 @@
+../Core/doom/m_fixed.c:34:1:FixedMul	1
+../Core/doom/m_fixed.c:47:9:FixedDiv	3

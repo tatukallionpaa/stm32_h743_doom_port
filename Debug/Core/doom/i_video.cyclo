@@ -1,0 +1,16 @@
+../Core/doom/i_video.c:233:6:I_SetGrabMouseCallback	1
+../Core/doom/i_video.c:240:6:I_DisplayFPSDots	1
+../Core/doom/i_video.c:245:6:I_ShutdownGraphics	1
+../Core/doom/i_video.c:260:6:I_StartFrame	1
+../Core/doom/i_video.c:265:6:I_GetEvent	1
+../Core/doom/i_video.c:326:6:I_StartTic	2
+../Core/doom/i_video.c:349:6:I_UpdateNoBlit	1
+../Core/doom/i_video.c:660:6:I_FinishUpdate	2
+../Core/doom/i_video.c:671:6:I_ReadScreen	1
+../Core/doom/i_video.c:681:6:I_SetPalette	2
+../Core/doom/i_video.c:700:5:I_GetPaletteIndex	4
+../Core/doom/i_video.c:731:6:I_SetWindowTitle	1
+../Core/doom/i_video.c:796:6:I_GraphicsCheckCommandLine	1
+../Core/doom/i_video.c:958:6:I_CheckIsScreensaver	1
+../Core/doom/i_video.c:1074:6:I_InitGraphics	1
+../Core/doom/i_video.c:1083:6:I_BindVideoVariables	1

@@ -1,0 +1,13 @@
+../Core/doom/f_finale.c:109:6:F_StartFinale	15
+../Core/doom/f_finale.c:161:9:F_Responder	2
+../Core/doom/f_finale.c:173:6:F_Ticker	12
+../Core/doom/f_finale.c:227:6:F_TextWrite	11
+../Core/doom/f_finale.c:340:6:F_StartCast	1
+../Core/doom/f_finale.c:358:6:F_CastTicker	53
+../Core/doom/f_finale.c:465:9:F_CastResponder	4
+../Core/doom/f_finale.c:486:6:F_CastPrint	12
+../Core/doom/f_finale.c:541:6:F_CastDrawer	2
+../Core/doom/f_finale.c:572:1:F_DrawPatchCol	3
+../Core/doom/f_finale.c:606:6:F_BunnyScroll	10
+../Core/doom/f_finale.c:661:13:F_ArtScreenDrawer	7
+../Core/doom/f_finale.c:702:6:F_Drawer	5

@@ -1,0 +1,2 @@
+../Core/doom/m_bbox.c:29:6:M_ClearBox	1
+../Core/doom/m_bbox.c:36:1:M_AddToBox	5

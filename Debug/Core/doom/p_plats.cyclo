@@ -1,0 +1,6 @@
+../Core/doom/p_plats.c:45:6:T_PlatRaise	19
+../Core/doom/p_plats.c:129:1:EV_DoPlat	13
+../Core/doom/p_plats.c:248:6:P_ActivateInStasis	5
+../Core/doom/p_plats.c:263:6:EV_StopPlat	5
+../Core/doom/p_plats.c:278:6:P_AddActivePlat	2
+../Core/doom/p_plats.c:291:6:P_RemoveActivePlat	2

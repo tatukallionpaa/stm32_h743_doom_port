@@ -1,0 +1,17 @@
+../Core/doom/r_main.c:122:1:R_AddPointToBox	24	static
+../Core/doom/r_main.c:145:1:R_PointOnSide	40	static
+../Core/doom/r_main.c:198:1:R_PointOnSegSide	56	static
+../Core/doom/r_main.c:275:1:R_PointToAngle	16	static
+../Core/doom/r_main.c:361:1:R_PointToAngle2	24	static
+../Core/doom/r_main.c:375:1:R_PointToDist	40	static
+../Core/doom/r_main.c:421:6:R_InitPointToAngle	4	static
+../Core/doom/r_main.c:448:9:R_ScaleFromGlobalAngle	48	static
+../Core/doom/r_main.c:504:6:R_InitTables	4	static
+../Core/doom/r_main.c:539:6:R_InitTextureMapping	24	static
+../Core/doom/r_main.c:609:6:R_InitLightTables	32	static
+../Core/doom/r_main.c:653:1:R_SetViewSize	16	static
+../Core/doom/r_main.c:666:6:R_ExecuteSetViewSize	32	static
+../Core/doom/r_main.c:766:6:R_Init	8	static
+../Core/doom/r_main.c:793:1:R_PointInSubsector	32	static
+../Core/doom/r_main.c:822:6:R_SetupFrame	24	static
+../Core/doom/r_main.c:862:6:R_RenderPlayerView	16	static

@@ -1,0 +1,7 @@
+../Core/doom/r_plane.c:94:6:R_InitPlanes	1
+../Core/doom/r_plane.c:114:1:R_MapPlane	7
+../Core/doom/r_plane.c:178:6:R_ClearPlanes	2
+../Core/doom/r_plane.c:211:1:R_FindPlane	7
+../Core/doom/r_plane.c:259:1:R_CheckPlane	6
+../Core/doom/r_plane.c:327:1:R_MakeSpans	9
+../Core/doom/r_plane.c:363:6:R_DrawPlanes	9

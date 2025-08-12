@@ -1,0 +1,7 @@
+../Core/doom/net_sdl.c:389:16:NET_NULL_InitClient	1
+../Core/doom/net_sdl.c:395:16:NET_NULL_InitServer	1
+../Core/doom/net_sdl.c:401:13:NET_NULL_SendPacket	1
+../Core/doom/net_sdl.c:406:16:NET_NULL_RecvPacket	1
+../Core/doom/net_sdl.c:412:13:NET_NULL_AddrToString	1
+../Core/doom/net_sdl.c:418:13:NET_NULL_FreeAddress	1
+../Core/doom/net_sdl.c:423:13:NET_NULL_ResolveAddress	1

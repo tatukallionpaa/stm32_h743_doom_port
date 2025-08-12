@@ -6,6 +6,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Core/opl/emu8950.c \
+../Core/opl/emuadpcm.c \
 ../Core/opl/ioperm_sys.c \
 ../Core/opl/opl.c \
 ../Core/opl/opl3.c \
@@ -20,6 +21,7 @@ C_SRCS += \
 
 OBJS += \
 ./Core/opl/emu8950.o \
+./Core/opl/emuadpcm.o \
 ./Core/opl/ioperm_sys.o \
 ./Core/opl/opl.o \
 ./Core/opl/opl3.o \
@@ -34,6 +36,7 @@ OBJS += \
 
 C_DEPS += \
 ./Core/opl/emu8950.d \
+./Core/opl/emuadpcm.d \
 ./Core/opl/ioperm_sys.d \
 ./Core/opl/opl.d \
 ./Core/opl/opl3.d \
@@ -54,7 +57,7 @@ Core/opl/%.o Core/opl/%.su Core/opl/%.cyclo: ../Core/opl/%.c Core/opl/subdir.mk
 clean: clean-Core-2f-opl
 
 clean-Core-2f-opl:
-	-$(RM) ./Core/opl/emu8950.cyclo ./Core/opl/emu8950.d ./Core/opl/emu8950.o ./Core/opl/emu8950.su ./Core/opl/ioperm_sys.cyclo ./Core/opl/ioperm_sys.d ./Core/opl/ioperm_sys.o ./Core/opl/ioperm_sys.su ./Core/opl/opl.cyclo ./Core/opl/opl.d ./Core/opl/opl.o ./Core/opl/opl.su ./Core/opl/opl3.cyclo ./Core/opl/opl3.d ./Core/opl/opl3.o ./Core/opl/opl3.su ./Core/opl/opl_linux.cyclo ./Core/opl/opl_linux.d ./Core/opl/opl_linux.o ./Core/opl/opl_linux.su ./Core/opl/opl_obsd.cyclo ./Core/opl/opl_obsd.d ./Core/opl/opl_obsd.o ./Core/opl/opl_obsd.su ./Core/opl/opl_queue.cyclo ./Core/opl/opl_queue.d ./Core/opl/opl_queue.o ./Core/opl/opl_queue.su ./Core/opl/opl_sdl.cyclo ./Core/opl/opl_sdl.d ./Core/opl/opl_sdl.o ./Core/opl/opl_sdl.su ./Core/opl/opl_stm32.cyclo ./Core/opl/opl_stm32.d ./Core/opl/opl_stm32.o ./Core/opl/opl_stm32.su ./Core/opl/opl_timer.cyclo ./Core/opl/opl_timer.d ./Core/opl/opl_timer.o ./Core/opl/opl_timer.su ./Core/opl/opl_win32.cyclo ./Core/opl/opl_win32.d ./Core/opl/opl_win32.o ./Core/opl/opl_win32.su ./Core/opl/opl_woody.cyclo ./Core/opl/opl_woody.d ./Core/opl/opl_woody.o ./Core/opl/opl_woody.su
+	-$(RM) ./Core/opl/emu8950.cyclo ./Core/opl/emu8950.d ./Core/opl/emu8950.o ./Core/opl/emu8950.su ./Core/opl/emuadpcm.cyclo ./Core/opl/emuadpcm.d ./Core/opl/emuadpcm.o ./Core/opl/emuadpcm.su ./Core/opl/ioperm_sys.cyclo ./Core/opl/ioperm_sys.d ./Core/opl/ioperm_sys.o ./Core/opl/ioperm_sys.su ./Core/opl/opl.cyclo ./Core/opl/opl.d ./Core/opl/opl.o ./Core/opl/opl.su ./Core/opl/opl3.cyclo ./Core/opl/opl3.d ./Core/opl/opl3.o ./Core/opl/opl3.su ./Core/opl/opl_linux.cyclo ./Core/opl/opl_linux.d ./Core/opl/opl_linux.o ./Core/opl/opl_linux.su ./Core/opl/opl_obsd.cyclo ./Core/opl/opl_obsd.d ./Core/opl/opl_obsd.o ./Core/opl/opl_obsd.su ./Core/opl/opl_queue.cyclo ./Core/opl/opl_queue.d ./Core/opl/opl_queue.o ./Core/opl/opl_queue.su ./Core/opl/opl_sdl.cyclo ./Core/opl/opl_sdl.d ./Core/opl/opl_sdl.o ./Core/opl/opl_sdl.su ./Core/opl/opl_stm32.cyclo ./Core/opl/opl_stm32.d ./Core/opl/opl_stm32.o ./Core/opl/opl_stm32.su ./Core/opl/opl_timer.cyclo ./Core/opl/opl_timer.d ./Core/opl/opl_timer.o ./Core/opl/opl_timer.su ./Core/opl/opl_win32.cyclo ./Core/opl/opl_win32.d ./Core/opl/opl_win32.o ./Core/opl/opl_win32.su ./Core/opl/opl_woody.cyclo ./Core/opl/opl_woody.d ./Core/opl/opl_woody.o ./Core/opl/opl_woody.su
 
 .PHONY: clean-Core-2f-opl
 

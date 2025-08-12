@@ -1,0 +1,12 @@
+../Core/doom/i_system.c:68:6:I_AtExit	1
+../Core/doom/i_system.c:86:6:I_Tactile	1
+../Core/doom/i_system.c:94:14:AutoAllocMemory	3
+../Core/doom/i_system.c:136:7:I_ZoneBase	2
+../Core/doom/i_system.c:184:6:I_PrintBanner	2
+../Core/doom/i_system.c:195:6:I_PrintDivider	2
+../Core/doom/i_system.c:207:6:I_PrintStartupBanner	1
+../Core/doom/i_system.c:228:9:I_ConsoleStdout	1
+../Core/doom/i_system.c:260:6:I_Quit	1
+../Core/doom/i_system.c:286:6:I_Error	3
+../Core/doom/i_system.c:367:7:I_Realloc	2
+../Core/doom/i_system.c:411:9:I_GetMemoryValue	13

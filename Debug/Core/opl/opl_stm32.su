@@ -1,0 +1,16 @@
+../Core/opl/opl_stm32.c:73:20:Stm32_LockMutex	16	static
+../Core/opl/opl_stm32.c:77:20:Stm32_UnlockMutex	16	static
+../Core/opl/opl_stm32.c:81:13:AdvanceTime	96	static
+../Core/opl/opl_stm32.c:141:6:OPL_Stm32_Mix_callback	120	static
+../Core/opl/opl_stm32.c:212:13:OPL_Stm32_Shutdown	8	static
+../Core/opl/opl_stm32.c:222:12:OPL_Stm32_Init	16	static
+../Core/opl/opl_stm32.c:250:21:OPL_Stm32_PortRead	24	static
+../Core/opl/opl_stm32.c:276:13:OPLTimer_CalculateEndTime	80	static
+../Core/opl/opl_stm32.c:290:13:WriteRegister	16	static
+../Core/opl/opl_stm32.c:341:13:OPL_Stm32_PortWrite	16	static
+../Core/opl/opl_stm32.c:357:13:OPL_Stm32_SetCallback	56	static
+../Core/opl/opl_stm32.c:366:13:OPL_Stm32_ClearCallbacks	8	static
+../Core/opl/opl_stm32.c:373:13:OPL_Stm32_Lock	8	static
+../Core/opl/opl_stm32.c:378:13:OPL_Stm32_Unlock	8	static
+../Core/opl/opl_stm32.c:383:13:OPL_Stm32_AddjustCallbacks	16	static
+../Core/opl/opl_stm32.c:390:13:OPL_Stm32_SetPaused	16	static

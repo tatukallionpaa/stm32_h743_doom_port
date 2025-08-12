@@ -115,6 +115,7 @@
 "./Core/doom/wi_stuff.o"
 "./Core/doom/z_zone.o"
 "./Core/opl/emu8950.o"
+"./Core/opl/emuadpcm.o"
 "./Core/opl/ioperm_sys.o"
 "./Core/opl/opl.o"
 "./Core/opl/opl3.o"

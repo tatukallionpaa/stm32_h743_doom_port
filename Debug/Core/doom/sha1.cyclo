@@ -1,0 +1,6 @@
+../Core/doom/sha1.c:42:6:SHA1_Init	1
+../Core/doom/sha1.c:57:13:Transform	2
+../Core/doom/sha1.c:200:6:SHA1_Update	10
+../Core/doom/sha1.c:240:6:SHA1_Final	5
+../Core/doom/sha1.c:305:6:SHA1_UpdateInt32	1
+../Core/doom/sha1.c:317:6:SHA1_UpdateString	1

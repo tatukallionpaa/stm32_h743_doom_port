@@ -1,0 +1,16 @@
+../Core/doom/net_packet.c:26:15:NET_NewPacket	2
+../Core/doom/net_packet.c:50:15:NET_PacketDup	1
+../Core/doom/net_packet.c:61:6:NET_FreePacket	1
+../Core/doom/net_packet.c:73:9:NET_ReadInt8	2
+../Core/doom/net_packet.c:88:9:NET_ReadInt16	2
+../Core/doom/net_packet.c:106:9:NET_ReadInt32	2
+../Core/doom/net_packet.c:123:9:NET_ReadSInt8	3
+../Core/doom/net_packet.c:140:9:NET_ReadSInt16	3
+../Core/doom/net_packet.c:157:9:NET_ReadSInt32	3
+../Core/doom/net_packet.c:177:7:NET_ReadString	4
+../Core/doom/net_packet.c:209:7:NET_ReadSafeString	5
+../Core/doom/net_packet.c:239:13:NET_IncreasePacket	1
+../Core/doom/net_packet.c:259:6:NET_WriteInt8	2
+../Core/doom/net_packet.c:270:6:NET_WriteInt16	2
+../Core/doom/net_packet.c:288:6:NET_WriteInt32	2
+../Core/doom/net_packet.c:305:6:NET_WriteString	2

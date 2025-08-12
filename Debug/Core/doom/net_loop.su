@@ -1,0 +1,17 @@
+../Core/doom/net_loop.c:41:13:QueueInit	16	static
+../Core/doom/net_loop.c:46:13:QueuePush	24	static
+../Core/doom/net_loop.c:63:22:QueuePop	24	static
+../Core/doom/net_loop.c:86:16:NET_CL_InitClient	8	static
+../Core/doom/net_loop.c:93:16:NET_CL_InitServer	8	static
+../Core/doom/net_loop.c:99:13:NET_CL_SendPacket	16	static
+../Core/doom/net_loop.c:104:16:NET_CL_RecvPacket	24	static
+../Core/doom/net_loop.c:122:13:NET_CL_AddrToString	24	static
+../Core/doom/net_loop.c:127:13:NET_CL_FreeAddress	16	static
+../Core/doom/net_loop.c:131:20:NET_CL_ResolveAddress	16	static
+../Core/doom/net_loop.c:162:16:NET_SV_InitClient	8	static
+../Core/doom/net_loop.c:168:16:NET_SV_InitServer	8	static
+../Core/doom/net_loop.c:175:13:NET_SV_SendPacket	16	static
+../Core/doom/net_loop.c:180:16:NET_SV_RecvPacket	24	static
+../Core/doom/net_loop.c:198:13:NET_SV_AddrToString	24	static
+../Core/doom/net_loop.c:203:13:NET_SV_FreeAddress	16	static
+../Core/doom/net_loop.c:207:20:NET_SV_ResolveAddress	16	static

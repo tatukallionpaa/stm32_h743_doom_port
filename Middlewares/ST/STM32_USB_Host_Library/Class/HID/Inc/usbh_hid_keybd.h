@@ -53,7 +53,7 @@ extern "C" {
 #define USBH_HID_KEYBD_REPORT_SIZE                       0x8U
 #endif /* USBH_HID_KEYBD_REPORT_SIZE */
 
-#ifdef USE_USB_KEY_DEFS
+/*
 #define KEY_NONE                               0x00
 #define KEY_ERRORROLLOVER                      0x01
 #define KEY_POSTFAIL                           0x02
@@ -273,7 +273,7 @@ extern "C" {
 #define KEY_RIGHTSHIFT                         0xE5
 #define KEY_RIGHTALT                           0xE6
 #define KEY_RIGHT_GUI                          0xE7
-#endif
+*/
 
 typedef struct
 {

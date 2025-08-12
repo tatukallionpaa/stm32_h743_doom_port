@@ -1,0 +1,3 @@
+../Core/doom/w_main.c:33:9:W_ParseCommandLine	19
+../Core/doom/w_main.c:205:6:W_AutoLoadWADs	1
+../Core/doom/w_main.c:241:6:W_CheckCorrectIWAD	3

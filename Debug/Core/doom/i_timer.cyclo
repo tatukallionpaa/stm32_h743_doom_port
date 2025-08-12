@@ -1,0 +1,5 @@
+../Core/doom/i_timer.c:35:5:I_GetTime	2
+../Core/doom/i_timer.c:57:5:I_GetTimeMS	2
+../Core/doom/i_timer.c:75:6:I_Sleep	2
+../Core/doom/i_timer.c:89:6:I_WaitVBL	1
+../Core/doom/i_timer.c:94:6:I_InitTimer	1
