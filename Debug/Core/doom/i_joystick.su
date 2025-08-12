@@ -1,5 +1,0 @@
-../Core/doom/i_joystick.c:178:6:I_InitGamepad	4	static
-../Core/doom/i_joystick.c:453:6:I_ShutdownJoystick	4	static
-../Core/doom/i_joystick.c:525:6:I_InitJoystick	4	static
-../Core/doom/i_joystick.c:773:6:I_UpdateJoystick	4	static
-../Core/doom/i_joystick.c:802:6:I_BindJoystickVariables	4	static

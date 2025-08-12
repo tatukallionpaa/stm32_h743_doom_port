@@ -1,4 +1,0 @@
-../Core/doom/p_floor.c:44:1:T_MovePlane	20
-../Core/doom/p_floor.c:204:6:T_MoveFloor	7
-../Core/doom/p_floor.c:253:1:EV_DoFloor	30
-../Core/doom/p_floor.c:447:1:EV_BuildStairs	11

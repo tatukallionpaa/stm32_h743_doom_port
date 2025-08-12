@@ -1,9 +1,0 @@
-../Core/doom/p_inter.c:66:1:P_GiveAmmo	23
-../Core/doom/p_inter.c:160:1:P_GiveWeapon	12
-../Core/doom/p_inter.c:221:1:P_GiveBody	3
-../Core/doom/p_inter.c:244:1:P_GiveArmor	2
-../Core/doom/p_inter.c:266:1:P_GiveCard	2
-../Core/doom/p_inter.c:282:1:P_GivePower	7
-../Core/doom/p_inter.c:331:1:P_TouchSpecialThing	99
-../Core/doom/p_inter.c:675:1:P_KillMobj	19
-../Core/doom/p_inter.c:788:1:P_DamageMobj	39

@@ -1,6 +1,0 @@
-../Core/doom/p_doors.c:58:6:T_VerticalDoor	23
-../Core/doom/p_doors.c:196:1:EV_DoLockedDoor	11
-../Core/doom/p_doors.c:247:1:EV_DoDoor	10
-../Core/doom/p_doors.c:332:1:EV_VerticalDoor	37
-../Core/doom/p_doors.c:520:6:P_SpawnDoorCloseIn30	1
-../Core/doom/p_doors.c:543:1:P_SpawnDoorRaiseIn5Mins	1

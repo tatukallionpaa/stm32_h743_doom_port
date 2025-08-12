@@ -1,4 +1,0 @@
-../Core/doom/i_input.c:297:6:I_StartTextInput	24	static
-../Core/doom/i_input.c:310:6:I_StopTextInput	4	static
-../Core/doom/i_input.c:463:6:I_ReadMouse	4	static
-../Core/doom/i_input.c:494:6:I_BindInputVariables	8	static

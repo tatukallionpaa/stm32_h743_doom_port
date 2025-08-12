@@ -1,3 +1,0 @@
-../Core/doom/w_file.c:40:13:W_OpenFile	4
-../Core/doom/w_file.c:74:6:W_CloseFile	1
-../Core/doom/w_file.c:79:8:W_Read	1

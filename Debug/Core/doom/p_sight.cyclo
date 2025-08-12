@@ -1,6 +1,0 @@
-../Core/doom/p_sight.c:45:9:PTR_SightTraverse	7
-../Core/doom/p_sight.c:86:1:P_DivlineSide	9
-../Core/doom/p_sight.c:140:1:P_InterceptVector2	2
-../Core/doom/p_sight.c:166:9:P_CrossSubsector	17
-../Core/doom/p_sight.c:296:9:P_CrossBSPNode	6
-../Core/doom/p_sight.c:339:1:P_CheckSight	3

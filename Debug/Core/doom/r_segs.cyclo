@@ -1,3 +1,0 @@
-../Core/doom/r_segs.c:96:1:R_RenderMaskedSegRange	11
-../Core/doom/r_segs.c:199:6:R_RenderSegLoop	22
-../Core/doom/r_segs.c:372:1:R_StoreWallRange	55

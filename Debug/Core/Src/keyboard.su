@@ -1,3 +1,0 @@
-../Core/Src/keyboard.c:18:13:find_pressed_keys	40	static
-../Core/Src/keyboard.c:45:13:find_released_keys	40	static
-../Core/Src/keyboard.c:71:6:USBH_HID_EventCallback	440	static

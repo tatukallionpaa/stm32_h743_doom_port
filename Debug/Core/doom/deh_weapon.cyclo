@@ -1,3 +1,0 @@
-../Core/doom/deh_weapon.c:39:14:DEH_WeaponStart	4
-../Core/doom/deh_weapon.c:58:13:DEH_WeaponParseLine	3
-../Core/doom/deh_weapon.c:82:13:DEH_WeaponSHA1Sum	2

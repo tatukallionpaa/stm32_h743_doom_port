@@ -1,4 +1,0 @@
-../Core/doom/deh_frame.c:40:14:DEH_FrameStart	24	static
-../Core/doom/deh_frame.c:76:13:DEH_FrameOverflow	24	static
-../Core/doom/deh_frame.c:105:13:DEH_FrameParseLine	48	static
-../Core/doom/deh_frame.c:142:13:DEH_FrameSHA1Sum	24	static

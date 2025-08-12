@@ -1,2 +1,0 @@
-../Core/doom/net_petname.c:104:13:InitPetName	8	static
-../Core/doom/net_petname.c:109:7:NET_GetRandomPetName	16	static

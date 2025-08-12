@@ -1,3 +1,0 @@
-../Core/doom/deh_ammo.c:29:14:DEH_AmmoStart	4
-../Core/doom/deh_ammo.c:48:13:DEH_AmmoParseLine	5
-../Core/doom/deh_ammo.c:83:13:DEH_AmmoSHA1Hash	2

@@ -1,2 +1,0 @@
-../Core/doom/net_dedicated.c:47:13:CheckForClientOptions	2
-../Core/doom/net_dedicated.c:64:6:NET_DedicatedServer	1

@@ -1,3 +1,0 @@
-../Core/doom/deh_misc.c:155:14:DEH_MiscStart	16	static
-../Core/doom/deh_misc.c:160:13:DEH_MiscParseLine	40	static
-../Core/doom/deh_misc.c:209:13:DEH_MiscSHA1Sum	24	static

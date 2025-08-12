@@ -1,3 +1,0 @@
-../Core/doom/w_main.c:33:9:W_ParseCommandLine	40	static
-../Core/doom/w_main.c:205:6:W_AutoLoadWADs	16	static
-../Core/doom/w_main.c:241:6:W_CheckCorrectIWAD	40	static

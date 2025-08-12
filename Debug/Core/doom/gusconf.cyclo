@@ -1,8 +1,0 @@
-../Core/doom/gusconf.c:46:21:MappingIndex	4
-../Core/doom/gusconf.c:64:12:SplitLine	9
-../Core/doom/gusconf.c:111:13:ParseLine	8
-../Core/doom/gusconf.c:155:13:ParseDMXConfig	4
-../Core/doom/gusconf.c:194:13:FreeDMXConfig	2
-../Core/doom/gusconf.c:204:14:ReadDMXConfig	2
-../Core/doom/gusconf.c:227:16:WriteTimidityConfig	10
-../Core/doom/gusconf.c:273:9:GUS_WriteConfig	2

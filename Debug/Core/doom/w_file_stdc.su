@@ -1,3 +1,0 @@
-../Core/doom/w_file_stdc.c:35:20:W_StdC_OpenFile	584	static
-../Core/doom/w_file_stdc.c:75:13:W_StdC_CloseFile	24	static
-../Core/doom/w_file_stdc.c:92:8:W_StdC_Read	32	static

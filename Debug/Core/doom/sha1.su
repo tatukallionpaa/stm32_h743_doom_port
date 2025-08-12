@@ -1,6 +1,0 @@
-../Core/doom/sha1.c:42:6:SHA1_Init	16	static
-../Core/doom/sha1.c:57:13:Transform	112	static
-../Core/doom/sha1.c:200:6:SHA1_Update	24	static
-../Core/doom/sha1.c:240:6:SHA1_Final	32	static
-../Core/doom/sha1.c:305:6:SHA1_UpdateInt32	24	static
-../Core/doom/sha1.c:317:6:SHA1_UpdateString	16	static

@@ -1,5 +1,0 @@
-../Core/doom/deh_ptr.c:31:12:CodePointerIndex	3
-../Core/doom/deh_ptr.c:46:13:DEH_PointerInit	2
-../Core/doom/deh_ptr.c:56:14:DEH_PointerStart	4
-../Core/doom/deh_ptr.c:78:13:DEH_PointerParseLine	6
-../Core/doom/deh_ptr.c:123:13:DEH_PointerSHA1Sum	2

@@ -1,6 +1,0 @@
-../Core/doom/p_sight.c:45:9:PTR_SightTraverse	24	static
-../Core/doom/p_sight.c:86:1:P_DivlineSide	40	static
-../Core/doom/p_sight.c:140:1:P_InterceptVector2	40	static
-../Core/doom/p_sight.c:166:9:P_CrossSubsector	88	static
-../Core/doom/p_sight.c:296:9:P_CrossBSPNode	24	static
-../Core/doom/p_sight.c:339:1:P_CheckSight	56	static

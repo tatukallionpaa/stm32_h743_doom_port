@@ -1,3 +1,0 @@
-../Core/Src/rgb_disp.c:13:6:rgb_init	1
-../Core/Src/rgb_disp.c:23:6:rgb_push_vis_line	3
-../Core/Src/rgb_disp.c:50:6:rgb_push_blank_line	1

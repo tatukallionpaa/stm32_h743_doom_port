@@ -1,7 +1,0 @@
-../Core/doom/m_argv.c:44:5:M_CheckParmWithArgs	4
-../Core/doom/m_argv.c:67:9:M_ParmExists	1
-../Core/doom/m_argv.c:72:5:M_CheckParm	1
-../Core/doom/m_argv.c:79:13:LoadResponseFile	1
-../Core/doom/m_argv.c:274:6:M_FindResponseFile	4
-../Core/doom/m_argv.c:542:13:M_GetExecutableName	1
-../Core/doom/m_argv.c:549:6:M_SetExeDir	1

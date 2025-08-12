@@ -1,3 +1,0 @@
-../Core/doom/deh_thing.c:55:14:DEH_ThingStart	24	static
-../Core/doom/deh_thing.c:80:13:DEH_ThingParseLine	48	static
-../Core/doom/deh_thing.c:112:13:DEH_ThingSHA1Sum	24	static

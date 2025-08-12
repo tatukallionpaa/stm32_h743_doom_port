@@ -1,3 +1,0 @@
-../Core/doom/deh_ammo.c:29:14:DEH_AmmoStart	24	static
-../Core/doom/deh_ammo.c:48:13:DEH_AmmoParseLine	40	static
-../Core/doom/deh_ammo.c:83:13:DEH_AmmoSHA1Hash	24	static

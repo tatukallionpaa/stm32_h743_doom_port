@@ -1,9 +1,0 @@
-../Core/doom/net_io.c:36:16:NET_NewContext	16	static
-../Core/doom/net_io.c:46:6:NET_AddModule	16	static
-../Core/doom/net_io.c:57:13:NET_ResolveAddress	24	static
-../Core/doom/net_io.c:76:6:NET_SendPacket	16	static
-../Core/doom/net_io.c:81:6:NET_SendBroadcast	24	static
-../Core/doom/net_io.c:91:9:NET_RecvPacket	32	static
-../Core/doom/net_io.c:114:7:NET_AddrToString	16	static
-../Core/doom/net_io.c:123:6:NET_ReferenceAddress	16	static
-../Core/doom/net_io.c:133:6:NET_ReleaseAddress	16	static

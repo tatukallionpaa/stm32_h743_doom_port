@@ -1,7 +1,0 @@
-../Core/doom/d_mode.c:50:9:D_ValidGameMode	4
-../Core/doom/d_mode.c:65:9:D_ValidEpisodeMap	15
-../Core/doom/d_mode.c:103:5:D_GetNumEpisodes	2
-../Core/doom/d_mode.c:140:9:D_ValidGameVersion	9
-../Core/doom/d_mode.c:166:9:D_IsEpisodeMap	3
-../Core/doom/d_mode.c:187:13:D_GameMissionString	10
-../Core/doom/d_mode.c:215:13:D_GameModeString	5

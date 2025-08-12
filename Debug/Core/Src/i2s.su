@@ -1,7 +1,0 @@
-../Core/Src/i2s.c:31:6:i2s_set_handle	16	static
-../Core/Src/i2s.c:37:6:start_i2s	8	static
-../Core/Src/i2s.c:47:6:i2s_buffer_housekeeping	4	static
-../Core/Src/i2s.c:75:6:i2s_get_empty_buffer	24	static
-../Core/Src/i2s.c:110:6:i2s_buffer_filled	16	static
-../Core/Src/i2s.c:115:6:i2s_set_buffer_mutex	4	static
-../Core/Src/i2s.c:120:6:i2s_clear_buffer_mutex	4	static

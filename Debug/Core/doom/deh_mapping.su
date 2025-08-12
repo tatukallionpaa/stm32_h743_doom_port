@@ -1,5 +1,0 @@
-../Core/doom/deh_mapping.c:30:29:GetMappingEntryByName	32	static
-../Core/doom/deh_mapping.c:63:14:GetStructField	32	static
-../Core/doom/deh_mapping.c:78:9:DEH_SetMapping	32	static
-../Core/doom/deh_mapping.c:129:9:DEH_SetStringMapping	32	static
-../Core/doom/deh_mapping.c:159:6:DEH_StructSHA1Sum	40	static

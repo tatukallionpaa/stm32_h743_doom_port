@@ -1,4 +1,0 @@
-../Core/doom/p_switch.c:99:6:P_InitSwitchList	8
-../Core/doom/p_switch.c:142:1:P_StartButton	5
-../Core/doom/p_switch.c:188:1:P_ChangeSwitchTexture	10
-../Core/doom/p_switch.c:263:1:P_UseSpecialLine	111

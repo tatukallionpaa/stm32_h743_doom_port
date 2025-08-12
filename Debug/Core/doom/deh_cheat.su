@@ -1,3 +1,0 @@
-../Core/doom/deh_cheat.c:56:21:FindCheatByName	24	static
-../Core/doom/deh_cheat.c:69:14:DEH_CheatStart	16	static
-../Core/doom/deh_cheat.c:74:13:DEH_CheatParseLine	48	static

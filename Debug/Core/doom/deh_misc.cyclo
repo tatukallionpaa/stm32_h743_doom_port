@@ -1,3 +1,0 @@
-../Core/doom/deh_misc.c:155:14:DEH_MiscStart	1
-../Core/doom/deh_misc.c:160:13:DEH_MiscParseLine	7
-../Core/doom/deh_misc.c:209:13:DEH_MiscSHA1Sum	2
