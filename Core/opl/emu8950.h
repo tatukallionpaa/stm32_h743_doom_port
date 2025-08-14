@@ -150,6 +150,11 @@ typedef struct __OPL {
 
 } OPL;
 
+typedef struct __pg_and_eg {
+  uint32_t pg_out;
+  int16_t eg_out;
+} pg_and_eg;
+
 OPL *OPL_new(uint32_t clk, uint32_t rate);
 void OPL_delete(OPL *);
 

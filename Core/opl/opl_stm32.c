@@ -170,8 +170,8 @@ void OPL_Stm32_Mix_callback(int16_t *buffer, uint16_t buffer_capacity)
             {
                 nsamples = buffer_samples - filled;
             }
-            if(nsamples>1024)
-                nsamples =1024;
+            if (nsamples > 1024)
+                nsamples = 1024;
         }
 
         Stm32_UnlockMutex(&callback_queue_mutex);
@@ -189,7 +189,7 @@ void OPL_Stm32_Mix_callback(int16_t *buffer, uint16_t buffer_capacity)
             sndptr[i * 2] = sndptr[i * 2 + 1] = sndptr[i];
         }
 #elif USE_EMU8950_OPL
-        OPL_calc_buffer_stereo(emu8950_opl,sndptr,nsamples);
+        OPL_calc_buffer_stereo(emu8950_opl, sndptr, nsamples);
         /*for (int i = 0 ; i <(nsamples*2); i+=2)
         {
             //sndptr[i]=OPL_calc(emu8950_opl);
@@ -228,8 +228,8 @@ static int OPL_Stm32_Init(unsigned int port_base)
         callback_queue = OPL_Queue_Create();
         current_time_us = 0;
 #if USE_EMU8950_OPL
-        //emu8950_opl = OPL_new(3579552, I2S_AUDIO_SAMPLE_RATE);
-        emu8950_opl = OPL_new(3579552, 3579552/72);
+        // emu8950_opl = OPL_new(3579552, I2S_AUDIO_SAMPLE_RATE);
+        emu8950_opl = OPL_new(3579552, 3579552 / 72);
 #elif USE_WOODY_OPL
         adlib_init(I2S_AUDIO_SAMPLE_RATE);
 #elif USE_OPL3
@@ -330,7 +330,7 @@ static void WriteRegister(unsigned int reg_num, unsigned int value)
 #if USE_WOODY_OPL
         adlib_write(reg_num, value);
 #elif USE_EMU8950_OPL
-        OPL_writeReg(emu8950_opl,reg_num,value);
+        OPL_writeReg(emu8950_opl, reg_num, value);
 #elif USE_OPL3
         OPL3_WriteRegBuffered(&opl_chip, reg_num, value);
 #endif

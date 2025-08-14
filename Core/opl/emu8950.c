@@ -167,6 +167,9 @@ static double kl_table[16] = {dB2(0.000), dB2(9.000), dB2(12.000), dB2(13.875), 
 static uint32_t tll_table[8 * 16][1 << TL_BITS][4];
 static int32_t rks_table[2][32][2];
 
+static pg_and_eg carr_table[OPL_TABLE_SIZE];
+static pg_and_eg mod_table[OPL_TABLE_SIZE];
+
 #define min(i, j) (((i) < (j)) ? (i) : (j))
 #define max(i, j) (((i) > (j)) ? (i) : (j))
 
@@ -793,7 +796,7 @@ static INLINE void update_short_noise(OPL *opl)
   opl->short_noise = (h_bit2 ^ h_bit7) | (h_bit3 ^ c_bit5) | (c_bit3 ^ c_bit5);
 }
 
-static INLINE void calc_phase(OPL_SLOT *slot, int32_t pm_phase, uint8_t pm_mode, uint8_t reset)
+static INLINE void calc_phase(OPL_SLOT *slot, int32_t pm_phase, uint8_t pm_mode, uint8_t reset, pg_and_eg *pg_eg)
 {
   int8_t pm = 0;
   if (slot->patch->PM)
@@ -809,6 +812,7 @@ static INLINE void calc_phase(OPL_SLOT *slot, int32_t pm_phase, uint8_t pm_mode,
   slot->pg_phase += (((slot->fnum & 0x3ff) + pm) * ml_table[slot->patch->ML]) << slot->blk >> 1;
   slot->pg_phase &= (DP_WIDTH - 1);
   slot->pg_out = slot->pg_phase >> DP_BASE_BITS;
+  pg_eg->pg_out = slot->pg_out;
 }
 
 static INLINE uint8_t lookup_attack_step(OPL_SLOT *slot, uint32_t counter)
@@ -846,6 +850,7 @@ static INLINE uint8_t lookup_decay_step(OPL_SLOT *slot, uint32_t counter)
   }
 }
 
+#if !EMU_8950_LINEARIZED
 static INLINE void calc_envelope(OPL_SLOT *slot, uint16_t eg_counter, uint8_t test)
 {
 
@@ -897,7 +902,64 @@ static INLINE void calc_envelope(OPL_SLOT *slot, uint16_t eg_counter, uint8_t te
     slot->eg_out = 0;
   }
 }
+#else
+static INLINE void calc_envelope(OPL_SLOT *slot, uint16_t eg_counter, uint8_t test, pg_and_eg *pg_eg)
+{
 
+  uint16_t mask = (1 << slot->eg_shift) - 1;
+  uint8_t s;
+
+  if (slot->eg_state == ATTACK)
+  {
+    if (0 < slot->eg_out && slot->eg_rate_h > 0 && (eg_counter & mask) == 0)
+    {
+      s = lookup_attack_step(slot, eg_counter);
+      slot->eg_out += (~slot->eg_out * s) >> 3;
+      pg_eg->eg_out = slot->eg_out;
+    }
+  }
+  else
+  {
+    if (slot->eg_rate_h > 0 && (eg_counter & mask) == 0)
+    {
+      slot->eg_out = min(EG_MUTE, slot->eg_out + lookup_decay_step(slot, eg_counter));
+      pg_eg->eg_out = slot->eg_out;
+    }
+  }
+
+  switch (slot->eg_state)
+  {
+  case ATTACK:
+    if (slot->eg_out == 0)
+    {
+      slot->eg_state = DECAY;
+      request_update(slot, UPDATE_EG);
+    }
+    break;
+
+  case DECAY:
+    if ((slot->patch->SL != 15) && (slot->eg_out >> 4) == slot->patch->SL)
+    {
+      slot->eg_state = SUSTAIN;
+      request_update(slot, UPDATE_EG);
+    }
+    break;
+
+  case SUSTAIN:
+  case RELEASE:
+  default:
+    break;
+  }
+
+  if (test)
+  {
+    slot->eg_out = 0;
+    pg_eg->eg_out = 0;
+  }
+}
+#endif
+
+#if !EMU_8950_LINEARIZED
 static void update_slots(OPL *opl)
 {
   int i;
@@ -914,6 +976,7 @@ static void update_slots(OPL *opl)
     calc_phase(slot, opl->pm_phase, opl->pm_mode, opl->test_flag & 4);
   }
 }
+#endif
 
 static void process_update_requests(OPL *opl)
 {
@@ -927,17 +990,25 @@ static void process_update_requests(OPL *opl)
   }
 }
 
-static INLINE void update_slot_for_buffer_calc(OPL *opl, uint16_t nsample, uint8_t slot_i)
+static INLINE void update_slot_and_buffer_pg_eg(OPL *opl, uint16_t nsamples, OPL_SLOT *slot, pg_and_eg *pg_eg_table)
 {
-  // opl->eg_counter++;
-  uint32_t local_eg_counter = opl->eg_counter + nsample + 1;
-  OPL_SLOT *slot = &opl->slot[slot_i];
-  /* if (slot->update_requests)
-   {
-     commit_slot_update(slot, opl->notesel);
-   }*/
-  calc_envelope(slot, local_eg_counter, opl->test_flag & 1);
-  calc_phase(slot, opl->pm_phase_table[nsample], opl->pm_mode, opl->test_flag & 4);
+  // OPL_SLOT *slot = &opl->slot[slot_i];
+  //  opl->eg_counter++;
+
+  for (uint16_t nsample = 0; nsample < nsamples; nsample++)
+  {
+    if (slot->update_requests)
+    {
+      commit_slot_update(slot, opl->notesel);
+    }
+    uint32_t local_eg_counter = opl->eg_counter + nsample + 1;
+    calc_envelope(slot, local_eg_counter, opl->test_flag & 1, pg_eg_table + nsample);
+    /*   }
+
+      for (uint16_t nsample = 0; nsample < nsamples; nsample++)
+      { */
+    calc_phase(slot, opl->pm_phase_table[nsample], opl->pm_mode, opl->test_flag & 4, pg_eg_table + nsample);
+  }
 }
 
 /* input: 0..8191 output: -4095..4095 */
@@ -949,6 +1020,7 @@ static INLINE int16_t lookup_exp_table(uint16_t i)
   return ((i & 0x8000) ? ~res : res) << 1;
 }
 
+#if !EMU_8950_LINEARIZED
 static INLINE int16_t to_linear(uint16_t h, OPL_SLOT *slot, int16_t am)
 {
   uint16_t att;
@@ -958,6 +1030,17 @@ static INLINE int16_t to_linear(uint16_t h, OPL_SLOT *slot, int16_t am)
   att = min(EG_MUTE, (slot->eg_out + slot->tll + am)) << 3;
   return lookup_exp_table(h + att);
 }
+#else
+static INLINE int16_t to_linear(uint16_t h, OPL_SLOT *slot, int16_t am, int16_t eg_out)
+{
+  uint16_t att;
+  if (eg_out >= EG_MAX)
+    return 0;
+
+  att = min(EG_MUTE, (eg_out + slot->tll + am)) << 3;
+  return lookup_exp_table(h + att);
+}
+#endif
 
 #if !EMU_8950_LINEARIZED
 static INLINE int16_t calc_slot_car(OPL *opl, int ch, int16_t fm)
@@ -986,6 +1069,7 @@ static INLINE int16_t calc_slot_mod(OPL *opl, int ch)
 }
 #else
 
+#if !EMU_8950_LINEARIZED
 static INLINE int16_t calc_slot_car(OPL *opl, int ch, int16_t fm, uint16_t nsample)
 {
   OPL_SLOT *slot = CAR(opl, ch);
@@ -997,8 +1081,21 @@ static INLINE int16_t calc_slot_car(OPL *opl, int ch, int16_t fm, uint16_t nsamp
 
   return slot->output[0];
 }
+#else
+static INLINE int16_t calc_slot_car(OPL *opl, int ch, int16_t fm, uint16_t nsample, pg_and_eg pg_eg)
+{
+  OPL_SLOT *slot = CAR(opl, ch);
 
-static INLINE int16_t calc_slot_mod(OPL *opl, int ch, uint16_t nsample)
+  uint8_t am = slot->patch->AM ? opl->lfo_am_table[nsample] : 0;
+
+  slot->output[1] = slot->output[0];
+  slot->output[0] = to_linear(slot->wave_table[(pg_eg.pg_out + 2 * (fm >> 1)) & (PG_WIDTH - 1)], slot, am, pg_eg.eg_out);
+
+  return slot->output[0];
+}
+#endif
+
+static INLINE int16_t calc_slot_mod(OPL *opl, int ch, uint16_t nsample, pg_and_eg pg_eg)
 {
   OPL_SLOT *slot = MOD(opl, ch);
 
@@ -1006,58 +1103,58 @@ static INLINE int16_t calc_slot_mod(OPL *opl, int ch, uint16_t nsample)
   uint8_t am = slot->patch->AM ? opl->lfo_am_table[nsample] : 0;
 
   slot->output[1] = slot->output[0];
-  slot->output[0] = to_linear(slot->wave_table[(slot->pg_out + fm) & (PG_WIDTH - 1)], slot, am);
+  slot->output[0] = to_linear(slot->wave_table[(pg_eg.pg_out + fm) & (PG_WIDTH - 1)], slot, am, pg_eg.eg_out);
 
   return slot->output[0];
 }
 #endif
 
-static INLINE int16_t calc_slot_tom(OPL *opl)
+static INLINE int16_t calc_slot_tom(OPL *opl, pg_and_eg pg_eg)
 {
   OPL_SLOT *slot = &(opl->slot[SLOT_TOM]);
 
-  return to_linear(slot->wave_table[slot->pg_out], slot, 0);
+  return to_linear(slot->wave_table[pg_eg.pg_out], slot, 0, pg_eg.eg_out);
 }
 
 /* Specify phase offset directly based on 10-bit (1024-length) sine table */
 #define _PD(phase) ((PG_BITS < 10) ? (phase >> (10 - PG_BITS)) : (phase << (PG_BITS - 10)))
 
-static INLINE int16_t calc_slot_snare(OPL *opl)
-{
-  OPL_SLOT *slot = &(opl->slot[SLOT_SD]);
+// static INLINE int16_t calc_slot_snare(OPL *opl, pg_and_eg pg_eg)
+// {
+//   OPL_SLOT *slot = &(opl->slot[SLOT_SD]);
 
-  uint32_t phase;
+//   uint32_t phase;
 
-  if (BIT(opl->slot[SLOT_HH].pg_out, PG_BITS - 2))
-    phase = (opl->noise & 1) ? _PD(0x300) : _PD(0x200);
-  else
-    phase = (opl->noise & 1) ? _PD(0x0) : _PD(0x100);
+//   if (BIT(opl->slot[SLOT_HH].pg_out, PG_BITS - 2))
+//     phase = (opl->noise & 1) ? _PD(0x300) : _PD(0x200);
+//   else
+//     phase = (opl->noise & 1) ? _PD(0x0) : _PD(0x100);
 
-  return to_linear(slot->wave_table[phase], slot, 0);
-}
+//   return to_linear(slot->wave_table[phase], slot, 0, pg_eg.eg_out);
+// }
 
-static INLINE int16_t calc_slot_cym(OPL *opl)
-{
-  OPL_SLOT *slot = &(opl->slot[SLOT_CYM]);
+// static INLINE int16_t calc_slot_cym(OPL *opl, pg_and_eg pg_eg)
+// {
+//   OPL_SLOT *slot = &(opl->slot[SLOT_CYM]);
 
-  uint32_t phase = opl->short_noise ? _PD(0x300) : _PD(0x100);
+//   uint32_t phase = opl->short_noise ? _PD(0x300) : _PD(0x100);
 
-  return to_linear(slot->wave_table[phase], slot, 0);
-}
+//   return to_linear(slot->wave_table[phase], slot, 0, pg_eg.eg_out);
+// }
 
-static INLINE int16_t calc_slot_hat(OPL *opl)
-{
-  OPL_SLOT *slot = &(opl->slot[SLOT_HH]);
+// static INLINE int16_t calc_slot_hat(OPL *opl)
+// {
+//   OPL_SLOT *slot = &(opl->slot[SLOT_HH]);
 
-  uint32_t phase;
+//   uint32_t phase;
 
-  if (opl->short_noise)
-    phase = (opl->noise & 1) ? _PD(0x2d0) : _PD(0x234);
-  else
-    phase = (opl->noise & 1) ? _PD(0x34) : _PD(0xd0);
+//   if (opl->short_noise)
+//     phase = (opl->noise & 1) ? _PD(0x2d0) : _PD(0x234);
+//   else
+//     phase = (opl->noise & 1) ? _PD(0x34) : _PD(0xd0);
 
-  return to_linear(slot->wave_table[phase], slot, 0);
-}
+//   return to_linear(slot->wave_table[phase], slot, 0);
+// }
 
 #define _MO(x) (-(x) >> 1)
 #define _RO(x) (x)
@@ -1072,13 +1169,15 @@ static INLINE int16_t calc_fm(OPL *opl, int ch)
   return calc_slot_car(opl, ch, calc_slot_mod(opl, ch));
 }
 #else
+// Täällä!!! Ratkaise kumpi on car ja kumpi mod
 static INLINE int16_t calc_fm(OPL *opl, int ch, uint16_t nsample)
 {
   if (opl->ch_alg[ch])
   {
-    return calc_slot_car(opl, ch, 0, nsample) + calc_slot_mod(opl, ch, nsample);
+    return calc_slot_car(opl, ch, 0, nsample, carr_table[nsample]) +
+           calc_slot_mod(opl, ch, nsample, mod_table[nsample]);
   }
-  return calc_slot_car(opl, ch, calc_slot_mod(opl, ch, nsample), nsample);
+  return calc_slot_car(opl, ch, calc_slot_mod(opl, ch, nsample, mod_table[nsample]), nsample, carr_table[nsample]);
 }
 #endif
 
@@ -1241,112 +1340,112 @@ void OPL_calc_buffer_stereo(OPL *opl, int16_t *buff, uint16_t nsamples)
   // update_slots(opl);
 
   // out = opl->ch_out;
-  process_update_requests(opl);
+  // process_update_requests(opl);
   /* CH1-6 */
-  for (uint8_t c = 0; c < 6; c++)
+
+  for (uint8_t ch = 0; ch < 6; ch++)
   {
-    uint8_t slot1 = c * 2;
-    uint8_t slot2 = slot1 + 1;
+    // break;
+    update_slot_and_buffer_pg_eg(opl, nsamples, CAR(opl, ch), carr_table);
+    update_slot_and_buffer_pg_eg(opl, nsamples, MOD(opl, ch), mod_table);
+    if (opl->mask & OPL_MASK_CH(ch))
+      continue;
+
     for (uint16_t nsample = 0; nsample < nsamples; nsample++)
     {
-      update_slot_for_buffer_calc(opl, nsample, slot1);
-      update_slot_for_buffer_calc(opl, nsample, slot2);
-      if (!(opl->mask & OPL_MASK_CH(c)))
-      {
-        buff[nsample * 2] += _MO(calc_fm(opl, c, nsample));
-        buff[nsample * 2 + 1] += buff[nsample * 2];
-      }
+      buff[nsample * 2] += _MO(calc_fm(opl, ch, nsample));
+      buff[nsample * 2 + 1] += buff[nsample * 2];
     }
   }
 
-  /* CH7 */
-  for (uint16_t nsample = 0; nsample < nsamples; nsample++)
-  {
-    update_slot_for_buffer_calc(opl, nsample, 6 * 2);
-    update_slot_for_buffer_calc(opl, nsample, 6 * 2 + 1);
-    if (!opl->rhythm_mode)
-    {
-      if (!(opl->mask & OPL_MASK_CH(6)))
-      {
-        buff[nsample * 2] += _MO(calc_fm(opl, 6, nsample));
-        buff[nsample * 2 + 1] += buff[nsample * 2];
-      }
-    }
-    else
-    {
-      if (!(opl->mask & OPL_MASK_BD))
-      {
-        buff[nsample * 2] += _RO(calc_fm(opl, 6, nsample));
-        buff[nsample * 2 + 1] += buff[nsample * 2];
-      }
-    }
-  }
+  // /* CH7 */
+  // for (uint16_t nsample = 0; nsample < nsamples; nsample++)
+  // {
+  //   update_slot_for_buffer_calc(opl, nsample, 6 * 2);
+  //   update_slot_for_buffer_calc(opl, nsample, 6 * 2 + 1);
+  //   if (!opl->rhythm_mode)
+  //   {
+  //     if (!(opl->mask & OPL_MASK_CH(6)))
+  //     {
+  //       buff[nsample * 2] += _MO(calc_fm(opl, 6, nsample));
+  //       buff[nsample * 2 + 1] += buff[nsample * 2];
+  //     }
+  //   }
+  //   else
+  //   {
+  //     if (!(opl->mask & OPL_MASK_BD))
+  //     {
+  //       buff[nsample * 2] += _RO(calc_fm(opl, 6, nsample));
+  //       buff[nsample * 2 + 1] += buff[nsample * 2];
+  //     }
+  //   }
+  // }
 
-  /* CH8-9 */
-  for (uint16_t nsample = 0; nsample < nsamples; nsample++)
-  {
-    update_short_noise(opl);
-    update_slot_for_buffer_calc(opl, nsample, 7 * 2);
-    update_slot_for_buffer_calc(opl, nsample, 7 * 2 + 1);
-    update_slot_for_buffer_calc(opl, nsample, 8 * 2);
-    update_slot_for_buffer_calc(opl, nsample, 8 * 2 + 1);
-    update_noise(opl, 14);
+  // /* CH8-9 */
+  // for (uint16_t nsample = 0; nsample < nsamples; nsample++)
+  // {
+  //   update_short_noise(opl);
+  //   update_slot_for_buffer_calc(opl, nsample, 7 * 2);
+  //   update_slot_for_buffer_calc(opl, nsample, 7 * 2 + 1);
+  //   update_slot_for_buffer_calc(opl, nsample, 8 * 2);
+  //   update_slot_for_buffer_calc(opl, nsample, 8 * 2 + 1);
+  //   update_noise(opl, 14);
 
-    if (!opl->rhythm_mode)
-    {
-      if (!(opl->mask & OPL_MASK_CH(7)))
-      {
-        buff[nsample * 2] += _MO(calc_fm(opl, 7, nsample));
-        buff[nsample * 2 + 1] += buff[nsample * 2];
-      }
-    }
-    else
-    {
-      if (!(opl->mask & OPL_MASK_HH))
-      {
-        buff[nsample * 2] += _RO(calc_slot_hat(opl));
-        buff[nsample * 2 + 1] += buff[nsample * 2];
-      }
-      if (!(opl->mask & OPL_MASK_SD))
-      {
-        buff[nsample * 2] += _RO(calc_slot_snare(opl));
-        buff[nsample * 2 + 1] += buff[nsample * 2];
-      }
-    }
+  //   if (!opl->rhythm_mode)
+  //   {
+  //     if (!(opl->mask & OPL_MASK_CH(7)))
+  //     {
+  //       buff[nsample * 2] += _MO(calc_fm(opl, 7, nsample));
+  //       buff[nsample * 2 + 1] += buff[nsample * 2];
+  //     }
+  //   }
+  //   else
+  //   {
+  //     if (!(opl->mask & OPL_MASK_HH))
+  //     {
+  //       buff[nsample * 2] += _RO(calc_slot_hat(opl));
+  //       buff[nsample * 2 + 1] += buff[nsample * 2];
+  //     }
+  //     if (!(opl->mask & OPL_MASK_SD))
+  //     {
+  //       buff[nsample * 2] += _RO(calc_slot_snare(opl));
+  //       buff[nsample * 2 + 1] += buff[nsample * 2];
+  //     }
+  //   }
 
-    update_noise(opl, 2);
+  //   update_noise(opl, 2);
 
-    if (!opl->rhythm_mode)
-    {
-      if (!(opl->mask & OPL_MASK_CH(8)))
-      {
-        buff[nsample * 2] += _MO(calc_fm(opl, 8, nsample));
-        buff[nsample * 2 + 1] += buff[nsample * 2];
-      }
-    }
-    else
-    {
-      if (!(opl->mask & OPL_MASK_TOM))
-      {
-        buff[nsample * 2] += _RO(calc_slot_tom(opl));
-        buff[nsample * 2 + 1] += buff[nsample * 2];
-      }
-      if (!(opl->mask & OPL_MASK_CYM))
-      {
-        buff[nsample * 2] += _RO(calc_slot_cym(opl));
-        buff[nsample * 2 + 1] += buff[nsample * 2];
-      }
-    }
-    update_noise(opl, 2);
-  }
+  //   if (!opl->rhythm_mode)
+  //   {
+  //     if (!(opl->mask & OPL_MASK_CH(8)))
+  //     {
+  //       buff[nsample * 2] += _MO(calc_fm(opl, 8, nsample));
+  //       buff[nsample * 2 + 1] += buff[nsample * 2];
+  //     }
+  //   }
+  //   else
+  //   {
+  //     if (!(opl->mask & OPL_MASK_TOM))
+  //     {
+  //       buff[nsample * 2] += _RO(calc_slot_tom(opl));
+  //       buff[nsample * 2 + 1] += buff[nsample * 2];
+  //     }
+  //     if (!(opl->mask & OPL_MASK_CYM))
+  //     {
+  //       buff[nsample * 2] += _RO(calc_slot_cym(opl));
+  //       buff[nsample * 2 + 1] += buff[nsample * 2];
+  //     }
+  //   }
+  //   update_noise(opl, 2);
+  // }
 
-  /* CH9 */
+  // /* CH9 */
 
-  /* ADPCM */
-  /*if (opl->adpcm != NULL && !(opl->mask & OPL_MASK_ADPCM))
-  {
-    out[14] = OPL_ADPCM_calc(opl->adpcm);
-  }*/
+  // /* ADPCM */
+  // /*if (opl->adpcm != NULL && !(opl->mask & OPL_MASK_ADPCM))
+  // {
+  //   out[14] = OPL_ADPCM_calc(opl->adpcm);
+  // }*/
   opl->eg_counter += nsamples;
 }
 
