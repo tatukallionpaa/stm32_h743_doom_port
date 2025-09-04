@@ -152,7 +152,7 @@ static fltype decrelconst[4] = {
 	(fltype)(1 / 26.17344),
 	(fltype)(1 / 22.44608)};
 
-void operator_advance(op_type *op_pt, Bit32s vib)
+void OPL_INLINE operator_advance(op_type *op_pt, Bit32s vib)
 {
 	op_pt->wfpos = op_pt->tcount; // waveform position
 
@@ -163,7 +163,7 @@ void operator_advance(op_type *op_pt, Bit32s vib)
 	op_pt->generator_pos += generator_add;
 }
 
-void operator_advance_drums(op_type *op_pt1, Bit32s vib1, op_type *op_pt2, Bit32s vib2, op_type *op_pt3, Bit32s vib3)
+void OPL_INLINE operator_advance_drums(op_type *op_pt1, Bit32s vib1, op_type *op_pt2, Bit32s vib2, op_type *op_pt3, Bit32s vib3)
 {
 	Bit32u c1 = op_pt1->tcount / FIXEDPT;
 	Bit32u c3 = op_pt3->tcount / FIXEDPT;
@@ -200,7 +200,7 @@ void operator_advance_drums(op_type *op_pt1, Bit32s vib1, op_type *op_pt2, Bit32
 
 // output level is sustained, mode changes only when operator is turned off (->release)
 // or when the keep-sustained bit is turned off (->sustain_nokeep)
-void operator_output(op_type *op_pt, Bit32s modulator, Bit32s trem)
+void OPL_INLINE operator_output(op_type *op_pt, Bit32s modulator, Bit32s trem)
 {
 	if (op_pt->op_state != OF_TYPE_OFF)
 	{
