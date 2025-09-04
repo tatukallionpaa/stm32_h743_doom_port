@@ -97,7 +97,7 @@ typedef int8_t		Bit8s;
 #define OP_ACT_NORMAL		0x01	// regular channel activated (bitmasked)
 #define OP_ACT_PERC			0x02	// percussion channel activated (bitmasked)
 
-#define BLOCKBUF_SIZE		512
+#define BLOCKBUF_SIZE		512*4
 
 
 // vibrato constants

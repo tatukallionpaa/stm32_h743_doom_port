@@ -163,15 +163,15 @@ void OPL_Stm32_Mix_callback(int16_t *buffer, uint16_t buffer_capacity)
         {
             next_callback_time = OPL_Queue_Peek(callback_queue) + pause_offset;
 
-            nsamples = (next_callback_time - current_time_us) * I2S_AUDIO_SAMPLE_RATE;
+            nsamples = (next_callback_time - current_time_us) * 49716;
             nsamples = (nsamples + OPL_SECOND - 1) / OPL_SECOND;
 
             if (nsamples > buffer_samples - filled)
             {
                 nsamples = buffer_samples - filled;
             }
-            if (nsamples > 1024)
-                nsamples = 1024;
+            // if (nsamples > 512)
+            //     nsamples = 512;
         }
 
         Stm32_UnlockMutex(&callback_queue_mutex);
@@ -184,10 +184,10 @@ void OPL_Stm32_Mix_callback(int16_t *buffer, uint16_t buffer_capacity)
 // todo store in stereo?
 #if USE_WOODY_OPL
         adlib_getsample(sndptr, nsamples);
-        for (int i = nsamples - 1; i >= 0; i--)
+/*         for (int i = nsamples - 1; i >= 0; i--)
         {
             sndptr[i * 2] = sndptr[i * 2 + 1] = sndptr[i];
-        }
+        } */
 #elif USE_EMU8950_OPL
         OPL_calc_buffer_stereo(emu8950_opl, sndptr, nsamples);
         /*for (int i = 0 ; i <(nsamples*2); i+=2)
@@ -231,6 +231,7 @@ static int OPL_Stm32_Init(unsigned int port_base)
         // emu8950_opl = OPL_new(3579552, I2S_AUDIO_SAMPLE_RATE);
         emu8950_opl = OPL_new(3579552, 3579552 / 72);
 #elif USE_WOODY_OPL
+        //  adlib_init(49716);
         adlib_init(I2S_AUDIO_SAMPLE_RATE);
 #elif USE_OPL3
         OPL3_Reset(&opl_chip, I2S_AUDIO_SAMPLE_RATE);
