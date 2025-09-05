@@ -26,7 +26,7 @@ buffer_slice_state_t buffer_slice_states[BUFFER_SLICES];
 int16_t *audio_buffer = (int16_t *)AUDIO_BUFFER_ADDRESS;
 uint8_t playing_slice_index = 0;
 bool i2s_started = false;
-bool i2s_buffer_mutex = false;
+bool buffer_available = false;
 
 void i2s_set_handle(I2S_HandleTypeDef *i2s_handle)
 {
@@ -46,78 +46,60 @@ void start_i2s(void)
 
 void i2s_buffer_housekeeping(void)
 {
-    return;
-    int16_t sample_num = BUFFER_TOTAL_SIZE - dma_s_handle_p->NDTR;
-    if (sample_num / BUFFER_SLICE_SIZE == playing_slice_index || i2s_buffer_mutex)
-    {
-        return;
-    }
-
-    playing_slice_index = sample_num / BUFFER_SLICE_SIZE;
-
-    buffer_slice_states[playing_slice_index] = BUF_PLAYING;
-    buffer_slice_states[(playing_slice_index + 1) % BUFFER_SLICES] = BUF_QUEUED;
-
-    for (uint8_t n = 0; n < BUFFER_SLICES; n++)
-    {
-        if (buffer_slice_states[n] == BUF_PLAYING && n != playing_slice_index)
-        {
-            memset(&audio_buffer[n * BUFFER_SLICE_SIZE], 0, BUFFER_SLICE_SIZE);
-            buffer_slice_states[n] = BUF_EMPTY;
-        }
-        if (buffer_slice_states[n] == BUF_QUEUED && n != (playing_slice_index + 1) % BUFFER_SLICES)
-        {
-            memset(&audio_buffer[n * BUFFER_SLICE_SIZE], 0, BUFFER_SLICE_SIZE);
-            buffer_slice_states[n] = BUF_EMPTY;
-        }
-    }
-}
-bool i2s_get_empty_buffer(uint8_t *token_p, int16_t **ret_ptr)
-{
     if (i2s_handle_p == NULL || dma_s_handle_p == NULL || !i2s_started)
     {
-        return false; // Handle the case where DMA is not initialized
+        return; // Handle the case where DMA is not initialized
     }
-    int16_t sample_num = BUFFER_TOTAL_SIZE - dma_s_handle_p->NDTR;
-    if (sample_num / BUFFER_SLICE_SIZE == playing_slice_index)
+    uint16_t sample_num = BUFFER_TOTAL_SIZE - dma_s_handle_p->NDTR;
+    if ((sample_num / BUFFER_SLICE_SIZE) != playing_slice_index)
     {
-        return false;
+        memset(&audio_buffer[playing_slice_index * BUFFER_SLICE_SIZE], 0, BUFFER_SLICE_SIZE);
+        playing_slice_index = sample_num / BUFFER_SLICE_SIZE;
+        buffer_available = true;
     }
-    memset(&audio_buffer[playing_slice_index * BUFFER_SLICE_SIZE], 0, BUFFER_SLICE_SIZE);
-    playing_slice_index = sample_num / BUFFER_SLICE_SIZE;
+}
+bool i2s_get_empty_buffer(int16_t **ret_ptr)
+{
+    if (!buffer_available)
+        return false;
 
     uint8_t empty_buffer_index = (playing_slice_index + 1) % BUFFER_SLICES;
-
-    *token_p = empty_buffer_index;
     *ret_ptr = &audio_buffer[empty_buffer_index * BUFFER_SLICE_SIZE];
-    /*
-    for (uint8_t n = 0; n < BUFFER_SLICES; n++)
-    {
-        if (buffer_slice_states[empty_buffer_index] == BUF_EMPTY)
-        {
-            *token_p = empty_buffer_index;
-            *ret_ptr = &audio_buffer[empty_buffer_index * BUFFER_SLICE_SIZE];
-            return true;
-        }
-        else
-        {
-            empty_buffer_index = (empty_buffer_index + 1) % BUFFER_SLICES;
-        }
-    }*/
+    buffer_available = false;
+
     return true;
-}
 
-void i2s_buffer_filled(uint8_t token)
-{
-    buffer_slice_states[token] = BUF_FILLED;
-}
+    /*  if (i2s_handle_p == NULL || dma_s_handle_p == NULL || !i2s_started)
+     {
+         return false; // Handle the case where DMA is not initialized
+     }
+     int16_t sample_num = BUFFER_TOTAL_SIZE - dma_s_handle_p->NDTR;
+     if (sample_num / BUFFER_SLICE_SIZE == playing_slice_index)
+     {
+         return false;
+     } if (i2s_handle_p == NULL || dma_s_handle_p == NULL || !i2s_started)
+     {
+         return false; // Handle the case where DMA is not initialized
+     }
+     int16_t sample_num = BUFFER_TOTAL_SIZE - dma_s_handle_p->NDTR;
+     if (sample_num / BUFFER_SLICE_SIZE == playing_slice_index)
+     {
+         return false;
+     }
+     memset(&audio_buffer[playing_slice_index * BUFFER_SLICE_SIZE], 0, BUFFER_SLICE_SIZE);
+     playing_slice_index = sample_num / BUFFER_SLICE_SIZE;
 
-void i2s_set_buffer_mutex(void)
-{
-    i2s_buffer_mutex = true;
-}
+     uint8_t empty_buffer_index = (playing_slice_index + 1) % BUFFER_SLICES;
 
-void i2s_clear_buffer_mutex(void)
-{
-    i2s_buffer_mutex = false;
+     *ret_ptr = &audio_buffer[empty_buffer_index * BUFFER_SLICE_SIZE];
+
+     return true;
+     memset(&audio_buffer[playing_slice_index * BUFFER_SLICE_SIZE], 0, BUFFER_SLICE_SIZE);
+     playing_slice_index = sample_num / BUFFER_SLICE_SIZE;
+
+     uint8_t empty_buffer_index = (playing_slice_index + 1) % BUFFER_SLICES;
+
+     *ret_ptr = &audio_buffer[empty_buffer_index * BUFFER_SLICE_SIZE];
+
+     return true; */
 }

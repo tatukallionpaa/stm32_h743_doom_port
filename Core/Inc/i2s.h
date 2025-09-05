@@ -18,7 +18,7 @@ extern "C" {
 #define BUFFER_SLICE_DUR_MS 60
 #define BUFFER_SLICE_SIZE ((2 * I2S_AUDIO_SAMPLE_RATE * BUFFER_SLICE_DUR_MS) / 1000)
 //#define BUFFER_SLICE_SIZE 2200
-#define BUFFER_SLICES 6
+#define BUFFER_SLICES 5
 #define BUFFER_TOTAL_SIZE (BUFFER_SLICE_SIZE * BUFFER_SLICES)
 
 
@@ -36,11 +36,8 @@ typedef enum {
 // Function prototypes
 void i2s_set_handle(I2S_HandleTypeDef* is2_handle);
 void start_i2s(void);
-bool i2s_get_empty_buffer(uint8_t *token_p, int16_t **ret_ptr);
-void i2s_buffer_filled(uint8_t token);
+bool i2s_get_empty_buffer(int16_t **ret_ptr);
 void i2s_buffer_housekeeping(void);
-void i2s_set_buffer_mutex(void);
-void i2s_clear_buffer_mutex(void);
 
 #ifdef __cplusplus
 }

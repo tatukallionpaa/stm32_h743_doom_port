@@ -279,18 +279,12 @@ static void I_stm32_UpdateSound(void)
     if (!sound_initialized)
         return;
 
-    i2s_set_buffer_mutex();
     int16_t *buf;
-    uint8_t buffer_token;
-    if (i2s_get_empty_buffer(&buffer_token, &buf))
+
+    if (i2s_get_empty_buffer(&buf))
     {
-        /*
-        if (buf == NULL)
-        {
-            i2s_clear_buffer_mutex();
-            return;
-        }*/
-        memset((void *)buf, 0, BUFFER_SLICE_SIZE * sizeof(int16_t));
+
+        // memset((void *)buf, 0, BUFFER_SLICE_SIZE * sizeof(int16_t));
 #if !NO_MUSIC
         music_generator(buf, BUFFER_SLICE_SIZE);
 #endif
@@ -339,9 +333,7 @@ static void I_stm32_UpdateSound(void)
 
             // i2s_buffer_filled(buffer_token);
         }
-        i2s_buffer_filled(buffer_token);
     }
-    i2s_clear_buffer_mutex();
 }
 
 static snddevice_t sound_sdl_devices[] =

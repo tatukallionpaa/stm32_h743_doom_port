@@ -3,3 +3,6 @@
 *.d
 *.su
 *.launch
+*.elf
+*.list
+*.map
