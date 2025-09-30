@@ -283,16 +283,14 @@ static void I_stm32_UpdateSound(void)
 
     if (i2s_get_empty_buffer(&buf))
     {
-
-        // memset((void *)buf, 0, BUFFER_SLICE_SIZE * sizeof(int16_t));
 #if !NO_MUSIC
-        music_generator(buf, BUFFER_SLICE_SIZE);
+        music_generator(buf, BUFFER_SLICE_SAMPLES);
 #endif
 
 #if I2S_AUDIO_SAMPLE_RATE == 44000
-        for (int i = 0; i < BUFFER_SLICE_SIZE / 2; i += 4)
+        for (int i = 0; i < BUFFER_SLICE_SAMPLES / 2; i += 4)
 #else
-        for (int i = 0; i < BUFFER_SLICE_SIZE / 2; i += 1)
+        for (int i = 0; i < BUFFER_SLICE_SAMPLES / 2; i += 1)
 #endif
         {
             int16_t sample_l = 0;

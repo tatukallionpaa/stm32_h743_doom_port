@@ -38,7 +38,7 @@ __attribute__((always_inline)) inline void vga_state_machine(void)
 	{
 		if(!skip_line){
 			rgb_push_vis_line();
-		//vga_state = Load_vis_line;
+		
 		}
 		skip_line = !skip_line;
 	}
@@ -47,7 +47,5 @@ __attribute__((always_inline)) inline void vga_state_machine(void)
 	else if (current_line == VGA_LAST_V_LINE)
 	{
 		rgb_push_blank_line();
-		//vga_state = Load_blank_line;
 	}
-	//rgb_push_line();
 }

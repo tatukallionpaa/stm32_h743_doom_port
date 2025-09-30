@@ -61,6 +61,7 @@ TIM_HandleTypeDef htim8;
 DMA_HandleTypeDef hdma_tim1_up;
 
 DMA_HandleTypeDef hdma_memtomem_dma1_stream0;
+DMA_HandleTypeDef hdma_memtomem_dma1_stream1;
 SDRAM_HandleTypeDef hsdram1;
 
 /* USER CODE BEGIN PV */
@@ -156,13 +157,10 @@ int main(void)
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
   HAL_TIM_OC_Start_IT(&htim8, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
-  // TIM1->CNT = 0;
-  // TIM5->CNT = 0;
-  // TIM8->CNT = 0;
-
 
   HAL_TIM_Base_Start(&htim1);
   i2s_set_handle(&hi2s1);
+  i2s_set_zeroing_dma_handle(&hdma_memtomem_dma1_stream1,DMA1);
 
   D_DoomMain();
 
@@ -578,6 +576,7 @@ static void MX_TIM8_Init(void)
   * Enable DMA controller clock
   * Configure DMA for memory to memory transfers
   *   hdma_memtomem_dma1_stream0
+  *   hdma_memtomem_dma1_stream1
   */
 static void MX_DMA_Init(void)
 {
@@ -601,6 +600,25 @@ static void MX_DMA_Init(void)
   hdma_memtomem_dma1_stream0.Init.MemBurst = DMA_MBURST_SINGLE;
   hdma_memtomem_dma1_stream0.Init.PeriphBurst = DMA_PBURST_SINGLE;
   if (HAL_DMA_Init(&hdma_memtomem_dma1_stream0) != HAL_OK)
+  {
+    Error_Handler( );
+  }
+
+  /* Configure DMA request hdma_memtomem_dma1_stream1 on DMA1_Stream1 */
+  hdma_memtomem_dma1_stream1.Instance = DMA1_Stream1;
+  hdma_memtomem_dma1_stream1.Init.Request = DMA_REQUEST_MEM2MEM;
+  hdma_memtomem_dma1_stream1.Init.Direction = DMA_MEMORY_TO_MEMORY;
+  hdma_memtomem_dma1_stream1.Init.PeriphInc = DMA_PINC_DISABLE;
+  hdma_memtomem_dma1_stream1.Init.MemInc = DMA_MINC_ENABLE;
+  hdma_memtomem_dma1_stream1.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+  hdma_memtomem_dma1_stream1.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+  hdma_memtomem_dma1_stream1.Init.Mode = DMA_NORMAL;
+  hdma_memtomem_dma1_stream1.Init.Priority = DMA_PRIORITY_LOW;
+  hdma_memtomem_dma1_stream1.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+  hdma_memtomem_dma1_stream1.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_HALFFULL;
+  hdma_memtomem_dma1_stream1.Init.MemBurst = DMA_MBURST_SINGLE;
+  hdma_memtomem_dma1_stream1.Init.PeriphBurst = DMA_PBURST_SINGLE;
+  if (HAL_DMA_Init(&hdma_memtomem_dma1_stream1) != HAL_OK)
   {
     Error_Handler( );
   }

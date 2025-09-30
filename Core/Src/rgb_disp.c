@@ -37,11 +37,9 @@ void rgb_push_vis_line(void)
 	DMA1->LIFCR = 0xffff;
 	uint8_t *storage_buffer = *storage_buffer_ptr;
 
-	// DMA_Stream_TypeDef *dma_s_handle = hdma->Instance;
 	dma_s_handle->NDTR = 320 / (sizeof(uint32_t));
 	dma_s_handle->M0AR = (uint32_t)(display_buffer);
 	dma_s_handle->PAR = ((uint32_t)(&storage_buffer[storage_pixel])) - (320 * 1);
-	// dma_s_handle->PAR = ((uint32_t)(&storage_buffer[storage_pixel]))-(320*0);
 	dma_s_handle->CR |= 1;
 
 	storage_pixel += 320;

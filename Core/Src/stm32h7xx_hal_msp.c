@@ -125,7 +125,7 @@ void HAL_I2S_MspInit(I2S_HandleTypeDef* hi2s)
 
     /* I2S1 DMA Init */
     /* SPI1_TX Init */
-    hdma_spi1_tx.Instance = DMA1_Stream1;
+    hdma_spi1_tx.Instance = DMA1_Stream2;
     hdma_spi1_tx.Init.Request = DMA_REQUEST_SPI1_TX;
     hdma_spi1_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
     hdma_spi1_tx.Init.PeriphInc = DMA_PINC_DISABLE;
