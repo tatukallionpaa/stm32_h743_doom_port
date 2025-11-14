@@ -93,7 +93,7 @@ typedef union
     uint8_t byte;
 } RBG323C;
 
-//static uint32_t pixel_format;
+// static uint32_t pixel_format;
 
 // display has been set up?
 
@@ -102,6 +102,9 @@ static boolean initialized = false;
 static RBG323C rbg323_palette[256];
 
 // The screen buffer; this is modified to draw things to the screen
+static uint8_t feed_buffer_array[SCREENWIDTH * SCREENHEIGHT];
+static uint8_t video_buffer_array[SCREENWIDTH * SCREENHEIGHT];
+
 pixel_t *I_VideoBuffer = NULL;
 
 // Gamma correction level to use
@@ -188,7 +191,6 @@ boolean screensaver_mode = false;
 // Flag indicating whether the screen is currently visible:
 // when the screen isnt visible, don't render the screen
 
-
 int usegamma = 0;
 // indicate FPS.
 
@@ -232,7 +234,7 @@ int usemouse = 0;
 
 void I_SetGrabMouseCallback(grabmouse_callback_t func)
 {
-   // grabmouse_callback = func;
+    // grabmouse_callback = func;
 }
 
 // Set the variable controlling FPS dots.
@@ -332,15 +334,15 @@ void I_StartTic(void)
 
     I_GetEvent();
 
-   /* if (usemouse && !nomouse && window_focused)
-    {
-        I_ReadMouse();
-    }
+    /* if (usemouse && !nomouse && window_focused)
+     {
+         I_ReadMouse();
+     }
 
-    if (joywait < I_GetTime())
-    {
-        I_UpdateJoystick();
-    }*/
+     if (joywait < I_GetTime())
+     {
+         I_UpdateJoystick();
+     }*/
 }
 
 //
@@ -516,13 +518,14 @@ static void CreateUpscaledTexture(boolean force)
     }
 
     h_upscale_old = h_upscale;
-    w_upscale_old = w_upscale;palette
+    w_upscale_old = w_upscale;
+    palette
 
-    // Set the scaling quality for rendering the upscaled texture to "linear",
-    // which looks much softer and smoother than "nearest" but does a better
-    // job at downscaling from the upscaled texture to screen.
+        // Set the scaling quality for rendering the upscaled texture to "linear",
+        // which looks much softer and smoother than "nearest" but does a better
+        // job at downscaling from the upscaled texture to screen.
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
     new_texture = SDL_CreateTexture(renderer,
                                     pixel_format,
@@ -659,9 +662,8 @@ void I_FinishUpdate(void)
 #else
 void I_FinishUpdate(void)
 {
-    for (uint16_t i = 0; i < SCREENHEIGHT*SCREENWIDTH;i++)
+    for (uint16_t i = 0; i < SCREENHEIGHT * SCREENWIDTH; i++)
         g_vga_feed_buffer[i] = rbg323_palette[I_VideoBuffer[i]].byte;
-
 }
 #endif
 
@@ -676,7 +678,6 @@ void I_ReadScreen(pixel_t *scr)
 //
 // I_SetPalette
 //
-
 
 void I_SetPalette(byte *doompalette)
 {
@@ -780,7 +781,7 @@ static void SetScaleFactor(int factor)
     // Pick 320x200 or 320x240, depending on aspect ratio correct
     if (aspect_ratio_correct)
     {
-        height = SCREENHEIGHT_4_3;
+        height = SCREENHEIGHT;
     }
     else
     {
@@ -969,8 +970,6 @@ void I_CheckIsScreensaver(void)
 #endif
 }
 
-
-
 #ifdef ORIGCODE
 void I_InitGraphics(void)
 {
@@ -1011,7 +1010,7 @@ void I_InitGraphics(void)
 
     if (aspect_ratio_correct == 1)
     {
-        actualheight = SCREENHEIGHT_4_3;
+        actualheight = SCREENHEIGHT;
     }
     else
     {
@@ -1073,9 +1072,11 @@ void I_InitGraphics(void)
 #endif
 void I_InitGraphics(void)
 {
-    I_VideoBuffer = (byte *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
-    g_vga_feed_buffer = (byte *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT_4_3, PU_STATIC, NULL);
-    memset((void*)g_vga_feed_buffer,0,SCREENWIDTH * SCREENHEIGHT_4_3);
+    // I_VideoBuffer = (byte *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+    I_VideoBuffer = (byte *)video_buffer_array;
+    // g_vga_feed_buffer = (byte *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+    g_vga_feed_buffer = feed_buffer_array;
+    memset((void *)g_vga_feed_buffer, 0, SCREENWIDTH * SCREENHEIGHT);
 }
 
 // Bind all variables controlling video options into the configuration
