@@ -317,4 +317,3 @@ uint8_t USBH_HID_GetASCIICode(HID_KEYBD_Info_TypeDef *info);
 /**
   * @}
   */
-

@@ -68,9 +68,9 @@ SDRAM_HandleTypeDef hsdram1;
 FATFS FatFs;
 volatile uint32_t g_systime_ms = 0;
 volatile uint32_t g_systime_ms_delay = 0;
-volatile uint8_t *g_vga_feed_buffer;
+volatile uint16_t *g_vga_feed_buffer;
 
-uint8_t *pix_pointer;
+uint16_t *pix_pointer;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -153,7 +153,7 @@ int main(void)
   SDIO_SDCard_Mount();
   vga_init(&pix_pointer, &hdma_tim1_up, &htim1, &htim5);
 
-  rgb_init(pix_pointer, (uint8_t **)&g_vga_feed_buffer, &hdma_memtomem_dma1_stream0);
+  rgb_init(pix_pointer, (uint16_t **)&g_vga_feed_buffer, &hdma_memtomem_dma1_stream0);
   HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
   HAL_TIM_OC_Start_IT(&htim8, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
@@ -741,8 +741,10 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, DAC_DEEM_Pin|DAC_MUTE_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, VGA_Pin|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, VGA_Pin|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_10
+                          |GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14
+                          |GPIO_PIN_15|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5
+                          |GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_PIN_Pin, GPIO_PIN_SET);
@@ -761,10 +763,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : VGA_Pin PB1 PB2 PB3
-                           PB4 PB5 PB6 PB7 */
-  GPIO_InitStruct.Pin = VGA_Pin|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
+  /*Configure GPIO pins : VGA_Pin PB1 PB2 PB10
+                           PB11 PB12 PB13 PB14
+                           PB15 PB3 PB4 PB5
+                           PB6 PB7 PB8 PB9 */
+  GPIO_InitStruct.Pin = VGA_Pin|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_10
+                          |GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14
+                          |GPIO_PIN_15|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5
+                          |GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;

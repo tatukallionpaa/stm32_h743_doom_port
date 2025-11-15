@@ -76,7 +76,7 @@ void main_sleep_func(void);
 
 extern volatile uint32_t g_systime_ms;
 extern volatile uint32_t g_systime_ms_delay;
-extern volatile uint8_t *g_vga_feed_buffer;
+extern volatile uint16_t *g_vga_feed_buffer;
 
 
 /* USER CODE END Private defines */

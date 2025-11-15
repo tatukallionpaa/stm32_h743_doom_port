@@ -6,19 +6,19 @@
 #include "rgb_disp.h"
 
 
-uint8_t **line_pointer;
+uint16_t **line_pointer;
 
 
 DMA_Stream_TypeDef *pix_dma_s_handle;
 TIM_HandleTypeDef *line_timer_handle;
 
 
-void vga_init(uint8_t **line_ptr_in, DMA_HandleTypeDef *dma_handle_in, TIM_HandleTypeDef *pixel_timer_handle,TIM_HandleTypeDef *line_timer_handle_in)
+void vga_init(uint16_t **line_ptr_in, DMA_HandleTypeDef *dma_handle_in, TIM_HandleTypeDef *pixel_timer_handle,TIM_HandleTypeDef *line_timer_handle_in)
 {
-	VGA_GPIO_Port->ODR &= 0xff00;
+	VGA_GPIO_Port->ODR &= 0x0000;
 
 	line_pointer = line_ptr_in;
-	memset((void *)VGA_PIX_BUFFER_ADDR , 0, VGA_PIXELS_PER_LINE);
+	memset((void *)VGA_PIX_BUFFER_ADDR , 0, VGA_PIXELS_PER_LINE*VGA_BYTES_PER_PIXEL);
 
 	pix_dma_s_handle = dma_handle_in->Instance;
 	pixel_timer_handle->Instance->DIER |= (1 << 8);			 // Enable timer up dma request
@@ -26,7 +26,7 @@ void vga_init(uint8_t **line_ptr_in, DMA_HandleTypeDef *dma_handle_in, TIM_Handl
 	pix_dma_s_handle->M0AR = (uint32_t)VGA_PIX_BUFFER_ADDR;
 	pix_dma_s_handle->NDTR = VGA_PIXELS_PER_LINE;
 	pix_dma_s_handle->CR |= 1;
-	*line_pointer = (uint8_t *)(VGA_PIX_BUFFER_ADDR  + VGA_BACK_PORCH_PIXELS);
+	*line_pointer = (uint16_t *)(VGA_PIX_BUFFER_ADDR  + VGA_BACK_PORCH_PIXELS*2);
 	line_timer_handle = line_timer_handle_in;
 }
 

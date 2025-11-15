@@ -86,12 +86,12 @@ typedef union
 {
     struct
     {
-        uint8_t r : 3;
-        uint8_t b : 2;
-        uint8_t g : 3;
+        uint8_t r : 5;
+        uint8_t b : 5;
+        uint8_t g : 6;
     };
-    uint8_t byte;
-} RBG323C;
+    uint16_t pixel;
+} RGB565C;
 
 // static uint32_t pixel_format;
 
@@ -99,10 +99,10 @@ typedef union
 
 static boolean initialized = false;
 // palette
-static RBG323C rbg323_palette[256];
+static RGB565C rgb565_palette[256];
 
 // The screen buffer; this is modified to draw things to the screen
-static uint8_t feed_buffer_array[SCREENWIDTH * SCREENHEIGHT];
+// static uint16_t feed_buffer_array[SCREENWIDTH * SCREENHEIGHT];
 static uint8_t video_buffer_array[SCREENWIDTH * SCREENHEIGHT];
 
 pixel_t *I_VideoBuffer = NULL;
@@ -663,7 +663,12 @@ void I_FinishUpdate(void)
 void I_FinishUpdate(void)
 {
     for (uint16_t i = 0; i < SCREENHEIGHT * SCREENWIDTH; i++)
-        g_vga_feed_buffer[i] = rbg323_palette[I_VideoBuffer[i]].byte;
+    {
+        RGB565C col = rgb565_palette[I_VideoBuffer[i]];
+        g_vga_feed_buffer[i] = col.b + (col.g << 5) + (col.r << 11);
+        // g_vga_feed_buffer[i] = 31;
+    }
+    // g_vga_feed_buffer[i] = rgb565_palette[I_VideoBuffer[i]].pixel;
 }
 #endif
 
@@ -688,9 +693,12 @@ void I_SetPalette(byte *doompalette)
         // Zero out the bottom two bits of each channel - the PC VGA
         // controller only supports 6 bits of accuracy.
 
-        rbg323_palette[i].r = gammatable[usegamma][*doompalette++] >> 5;
-        rbg323_palette[i].g = gammatable[usegamma][*doompalette++] >> 5;
-        rbg323_palette[i].b = gammatable[usegamma][*doompalette++] >> 6;
+        rgb565_palette[i].r = gammatable[usegamma][*doompalette++] >> 3;
+        rgb565_palette[i].g = gammatable[usegamma][*doompalette++] >> 2;
+        rgb565_palette[i].b = gammatable[usegamma][*doompalette++] >> 3;
+        // rgb565_palette[i].r = gammatable[usegamma][*doompalette++] & ~3;
+        // rgb565_palette[i].g = gammatable[usegamma][*doompalette++] & ~3;
+        //  rgb565_palette[i].b = gammatable[usegamma][*doompalette++] & ~3;
     }
 
     // palette_to_set = true;
@@ -708,7 +716,7 @@ int I_GetPaletteIndex(int r, int g, int b)
 
     for (i = 0; i < 256; ++i)
     {
-        diff = (r - rbg323_palette[i].r) * (r - rbg323_palette[i].r) + (g - rbg323_palette[i].g) * (g - rbg323_palette[i].g) + (b - rbg323_palette[i].b) * (b - rbg323_palette[i].b);
+        diff = (r - rgb565_palette[i].r) * (r - rgb565_palette[i].r) + (g - rgb565_palette[i].g) * (g - rgb565_palette[i].g) + (b - rgb565_palette[i].b) * (b - rgb565_palette[i].b);
 
         if (diff < best_diff)
         {
@@ -1074,9 +1082,9 @@ void I_InitGraphics(void)
 {
     // I_VideoBuffer = (byte *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
     I_VideoBuffer = (byte *)video_buffer_array;
-    // g_vga_feed_buffer = (byte *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
-    g_vga_feed_buffer = feed_buffer_array;
-    memset((void *)g_vga_feed_buffer, 0, SCREENWIDTH * SCREENHEIGHT);
+    g_vga_feed_buffer = (uint16_t *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT * 2, PU_STATIC, NULL);
+    // g_vga_feed_buffer = feed_buffer_array;
+    memset((void *)g_vga_feed_buffer, 0, SCREENWIDTH * SCREENHEIGHT*2);
 }
 
 // Bind all variables controlling video options into the configuration

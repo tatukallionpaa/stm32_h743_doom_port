@@ -28,10 +28,11 @@
 #define VGA_BACK_PORCH_PIXELS 48/2
 #define VGA_VIS_PIXELS 640/2
 #define VGA_PIXELS_PER_LINE 800/2
+#define VGA_BYTES_PER_PIXEL 2
 #endif
 
 
-void vga_init(uint8_t **line_ptr_in, DMA_HandleTypeDef *dma_handle_in, TIM_HandleTypeDef *pixel_timer_handle,TIM_HandleTypeDef *line_timer_handle_in);
+void vga_init(uint16_t **line_ptr_in, DMA_HandleTypeDef *dma_handle_in, TIM_HandleTypeDef *pixel_timer_handle,TIM_HandleTypeDef *line_timer_handle_in);
 void vga_state_machine(void);
 
 #endif //__VGA_H
