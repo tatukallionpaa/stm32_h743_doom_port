@@ -24,6 +24,7 @@
 #include "SDL_opengl.h"
 #else
 #include "main.h"
+#include "hard_adresses.h"
 #endif
 
 #ifdef _WIN32
@@ -82,15 +83,11 @@ static SDL_Rect blit_rect = {
     SCREENHEIGHT};
 #endif
 
-typedef union
+typedef struct
 {
-    struct
-    {
-        uint8_t r : 5;
-        uint8_t b : 5;
-        uint8_t g : 6;
-    };
-    uint16_t pixel;
+    uint8_t b : 5;
+    uint8_t g : 6;
+    uint8_t r : 5;
 } RGB565C;
 
 // static uint32_t pixel_format;
@@ -102,8 +99,8 @@ static boolean initialized = false;
 static RGB565C rgb565_palette[256];
 
 // The screen buffer; this is modified to draw things to the screen
-// static uint16_t feed_buffer_array[SCREENWIDTH * SCREENHEIGHT];
-static uint8_t video_buffer_array[SCREENWIDTH * SCREENHEIGHT];
+static uint16_t feed_buffer_array[SCREENWIDTH * SCREENHEIGHT];
+// static uint8_t video_buffer_array[SCREENWIDTH * SCREENHEIGHT];
 
 pixel_t *I_VideoBuffer = NULL;
 
@@ -666,9 +663,7 @@ void I_FinishUpdate(void)
     {
         RGB565C col = rgb565_palette[I_VideoBuffer[i]];
         g_vga_feed_buffer[i] = col.b + (col.g << 5) + (col.r << 11);
-        // g_vga_feed_buffer[i] = 31;
     }
-    // g_vga_feed_buffer[i] = rgb565_palette[I_VideoBuffer[i]].pixel;
 }
 #endif
 
@@ -1081,10 +1076,10 @@ void I_InitGraphics(void)
 void I_InitGraphics(void)
 {
     // I_VideoBuffer = (byte *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
-    I_VideoBuffer = (byte *)video_buffer_array;
-    g_vga_feed_buffer = (uint16_t *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT * 2, PU_STATIC, NULL);
-    // g_vga_feed_buffer = feed_buffer_array;
-    memset((void *)g_vga_feed_buffer, 0, SCREENWIDTH * SCREENHEIGHT*2);
+    I_VideoBuffer = (byte *)VIDEO_BUFFER_ADDR;
+    //g_vga_feed_buffer = (uint16_t *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT * 2, PU_STATIC, NULL);
+    g_vga_feed_buffer = (uint16_t *)feed_buffer_array;
+    memset((void *)g_vga_feed_buffer, 0, SCREENWIDTH * SCREENHEIGHT * 2);
 }
 
 // Bind all variables controlling video options into the configuration
