@@ -222,6 +222,11 @@ void operator_off(op_type *op_pt)
 	(void)op_pt;
 }
 
+void OPL_INLINE operator_off_il(op_type *op_pt)
+{
+	(void)op_pt;
+}
+
 // output level is sustained, mode changes only when operator is turned off (->release)
 // or when the keep-sustained bit is turned off (->sustain_nokeep)
 void operator_sustain(op_type *op_pt)
@@ -234,8 +239,48 @@ void operator_sustain(op_type *op_pt)
 	op_pt->generator_pos -= num_steps_add * FIXEDPT;
 }
 
+void OPL_INLINE operator_sustain_il(op_type *op_pt)
+{
+	Bit32u num_steps_add = op_pt->generator_pos / FIXEDPT; // number of (standardized) samples
+	for (Bit32u ct = 0; ct < num_steps_add; ct++)
+	{
+		op_pt->cur_env_step++;
+	}
+	op_pt->generator_pos -= num_steps_add * FIXEDPT;
+}
+
 // operator in release mode, if output level reaches zero the operator is turned off
 void operator_release(op_type *op_pt)
+{
+	// ??? boundary?
+	if (op_pt->amp > 0.00000001)
+	{
+		// release phase
+		op_pt->amp *= op_pt->releasemul;
+	}
+
+	Bit32u num_steps_add = op_pt->generator_pos / FIXEDPT; // number of (standardized) samples
+	for (Bit32u ct = 0; ct < num_steps_add; ct++)
+	{
+		op_pt->cur_env_step++; // sample counter
+		if ((op_pt->cur_env_step & op_pt->env_step_r) == 0)
+		{
+			if (op_pt->amp <= 0.00000001)
+			{
+				// release phase finished, turn off this operator
+				op_pt->amp = 0.0;
+				if (op_pt->op_state == OF_TYPE_REL)
+				{
+					op_pt->op_state = OF_TYPE_OFF;
+				}
+			}
+			op_pt->step_amp = op_pt->amp;
+		}
+	}
+	op_pt->generator_pos -= num_steps_add * FIXEDPT;
+}
+
+void OPL_INLINE operator_release_il(op_type *op_pt)
 {
 	// ??? boundary?
 	if (op_pt->amp > 0.00000001)
@@ -302,6 +347,41 @@ void operator_decay(op_type *op_pt)
 	op_pt->generator_pos -= num_steps_add * FIXEDPT;
 }
 
+void OPL_INLINE operator_decay_il(op_type *op_pt)
+{
+	if (op_pt->amp > op_pt->sustain_level)
+	{
+		// decay phase
+		op_pt->amp *= op_pt->decaymul;
+	}
+
+	Bit32u num_steps_add = op_pt->generator_pos / FIXEDPT; // number of (standardized) samples
+	for (Bit32u ct = 0; ct < num_steps_add; ct++)
+	{
+		op_pt->cur_env_step++;
+		if ((op_pt->cur_env_step & op_pt->env_step_d) == 0)
+		{
+			if (op_pt->amp <= op_pt->sustain_level)
+			{
+				// decay phase finished, sustain level reached
+				if (op_pt->sus_keep)
+				{
+					// keep sustain level (until turned off)
+					op_pt->op_state = OF_TYPE_SUS;
+					op_pt->amp = op_pt->sustain_level;
+				}
+				else
+				{
+					// next: release phase
+					op_pt->op_state = OF_TYPE_SUS_NOKEEP;
+				}
+			}
+			op_pt->step_amp = op_pt->amp;
+		}
+	}
+	op_pt->generator_pos -= num_steps_add * FIXEDPT;
+}
+
 // operator in attack mode, if full output level is reached,
 // the operator is switched into decay mode
 void operator_attack(op_type *op_pt)
@@ -331,6 +411,58 @@ void operator_attack(op_type *op_pt)
 		}
 	}
 	op_pt->generator_pos -= num_steps_add * FIXEDPT;
+}
+
+void OPL_INLINE operator_attack_il(op_type *op_pt)
+{
+	op_pt->amp = ((op_pt->a3 * op_pt->amp + op_pt->a2) * op_pt->amp + op_pt->a1) * op_pt->amp + op_pt->a0;
+
+	Bit32u num_steps_add = op_pt->generator_pos / FIXEDPT; // number of (standardized) samples
+	for (Bit32u ct = 0; ct < num_steps_add; ct++)
+	{
+		op_pt->cur_env_step++; // next sample
+		if ((op_pt->cur_env_step & op_pt->env_step_a) == 0)
+		{ // check if next step already reached
+			if (op_pt->amp > 1.0)
+			{
+				// attack phase finished, next: decay
+				op_pt->op_state = OF_TYPE_DEC;
+				op_pt->amp = 1.0;
+				op_pt->step_amp = 1.0;
+			}
+			op_pt->step_skip_pos_a <<= 1;
+			if (op_pt->step_skip_pos_a == 0)
+				op_pt->step_skip_pos_a = 1;
+			if (op_pt->step_skip_pos_a & op_pt->env_step_skip_a)
+			{ // check if required to skip next step
+				op_pt->step_amp = op_pt->amp;
+			}
+		}
+	}
+	op_pt->generator_pos -= num_steps_add * FIXEDPT;
+}
+
+void OPL_INLINE opfuncs_inlined(Bit32u opfunc,op_type *op_pt){
+	switch (opfunc) {	
+		case 0:
+			operator_attack_il(op_pt);
+			break;
+		case 1:
+			operator_decay_il(op_pt);
+			break;
+		case 2:
+			operator_release_il(op_pt);
+			break;
+		case 3:
+			operator_sustain_il(op_pt);
+			break;
+		case 4:
+			operator_release_il(op_pt);
+			break;
+		case 5:
+			operator_off_il(op_pt);
+			break;
+	}
 }
 
 typedef void (*optype_fptr)(op_type *);
@@ -1194,7 +1326,35 @@ void adlib_getsample(Bit16s *sndptr, Bits numsamples)
 				for (i = 0; i < endsamples; i++)
 				{
 					operator_advance(&cptr[9], vibval1[i]);
-					opfuncs[cptr[9].op_state](&cptr[9]);
+					opfuncs_inlined(cptr[9].op_state, &cptr[9]);
+				/* 	switch (cptr[9].op_state)
+					{
+					case 0:
+						operator_attack_il(&cptr[9]);
+						break;
+					case 1:
+						operator_decay_il(&cptr[9]);
+						break;
+					case 2:
+						operator_release_il(&cptr[9]);
+
+					case 3:
+						operator_sustain_il(&cptr[9]);
+						break;
+
+					case 4:
+						operator_release_il(&cptr[9]);
+						break;
+
+					case 5:
+						operator_off_il(&cptr[9]);
+						break;
+
+					default:
+						break;
+					} */
+
+					//opfuncs[cptr[9].op_state](&cptr[9]);
 					operator_output(&cptr[9], 0, tremval1[i]);
 
 					Bit32s chanval = cptr[9].cval * 2;
@@ -1236,11 +1396,13 @@ void adlib_getsample(Bit16s *sndptr, Bits numsamples)
 				for (i = 0; i < endsamples; i++)
 				{
 					operator_advance(&cptr[0], vibval1[i]);
-					opfuncs[cptr[0].op_state](&cptr[0]);
+					opfuncs_inlined(cptr[0].op_state, &cptr[0]);
+					//opfuncs[cptr[0].op_state](&cptr[0]);
 					operator_output(&cptr[0], (cptr[0].lastcval + cptr[0].cval) * cptr[0].mfbi / 2, tremval1[i]);
 
 					operator_advance(&cptr[9], vibval2[i]);
-					opfuncs[cptr[9].op_state](&cptr[9]);
+					opfuncs_inlined(cptr[9].op_state, &cptr[9]);
+					//opfuncs[cptr[9].op_state](&cptr[9]);
 					operator_output(&cptr[9], cptr[0].cval * FIXEDPT, tremval2[i]);
 
 					Bit32s chanval = cptr[9].cval * 2;
@@ -1271,7 +1433,8 @@ void adlib_getsample(Bit16s *sndptr, Bits numsamples)
 			for (i = 0; i < endsamples; i++)
 			{
 				operator_advance(&cptr[0], vibval3[i]);
-				opfuncs[cptr[0].op_state](&cptr[0]); // TomTom
+				opfuncs_inlined(cptr[0].op_state, &cptr[0]);
+				//opfuncs[cptr[0].op_state](&cptr[0]); // TomTom
 				operator_output(&cptr[0], 0, tremval3[i]);
 				Bit32s chanval = cptr[0].cval * 2;
 				CHANVAL_OUT
@@ -1329,13 +1492,16 @@ void adlib_getsample(Bit16s *sndptr, Bits numsamples)
 			{
 				operator_advance_drums(&op[7], vibval1[i], &op[7 + 9], vibval2[i], &op[8 + 9], vibval4[i]);
 
-				opfuncs[op[7].op_state](&op[7]); // Hihat
+				opfuncs_inlined(op[7].op_state, &op[7]);
+				//opfuncs[op[7].op_state](&op[7]); // Hihat
 				operator_output(&op[7], 0, tremval1[i]);
 
-				opfuncs[op[7 + 9].op_state](&op[7 + 9]); // Snare
+				opfuncs_inlined(op[7 + 9].op_state, &op[7 + 9]);
+				//opfuncs[op[7 + 9].op_state](&op[7 + 9]); // Snare
 				operator_output(&op[7 + 9], 0, tremval2[i]);
 
-				opfuncs[op[8 + 9].op_state](&op[8 + 9]); // Cymbal
+				opfuncs_inlined(op[8 + 9].op_state, &op[8 + 9]);
+				//opfuncs[op[8 + 9].op_state](&op[8 + 9]); // Cymbal
 				operator_output(&op[8 + 9], 0, tremval4[i]);
 
 				Bit32s chanval = (op[7].cval + op[7 + 9].cval + op[8 + 9].cval) * 2;
@@ -1572,12 +1738,14 @@ void adlib_getsample(Bit16s *sndptr, Bits numsamples)
 			{
 				// carrier1
 				operator_advance(&cptr[0], vibval1[i]);
-				opfuncs[cptr[0].op_state](&cptr[0]);
+				opfuncs_inlined(cptr[0].op_state, &cptr[0]);
+				//opfuncs[cptr[0].op_state](&cptr[0]);
 				operator_output(&cptr[0], (cptr[0].lastcval + cptr[0].cval) * cptr[0].mfbi / 2, tremval1[i]);
 
 				// carrier2
 				operator_advance(&cptr[9], vibval2[i]);
-				opfuncs[cptr[9].op_state](&cptr[9]);
+				opfuncs_inlined(cptr[9].op_state, &cptr[9]);
+				//opfuncs[cptr[9].op_state](&cptr[9]);
 				operator_output(&cptr[9], 0, tremval2[i]);
 
 				Bit32s chanval = cptr[9].cval + cptr[0].cval;
@@ -1761,12 +1929,14 @@ void adlib_getsample(Bit16s *sndptr, Bits numsamples)
 			{
 				// modulator
 				operator_advance(&cptr[0], vibval1[i]);
-				opfuncs[cptr[0].op_state](&cptr[0]);
+				opfuncs_inlined(cptr[0].op_state, &cptr[0]);
+				//opfuncs[cptr[0].op_state](&cptr[0]);
 				operator_output(&cptr[0], (cptr[0].lastcval + cptr[0].cval) * cptr[0].mfbi / 2, tremval1[i]);
 
 				// carrier
 				operator_advance(&cptr[9], vibval2[i]);
-				opfuncs[cptr[9].op_state](&cptr[9]);
+				opfuncs_inlined(cptr[9].op_state, &cptr[9]);
+				//opfuncs[cptr[9].op_state](&cptr[9]);
 				operator_output(&cptr[9], cptr[0].cval * FIXEDPT, tremval2[i]);
 
 				Bit32s chanval = cptr[9].cval;
