@@ -163,7 +163,7 @@ static void OPL_INLINE operator_advance(op_type *op_pt, Bit32s vib)
 	op_pt->generator_pos += generator_add;
 }
 
-static OPL_INLINE operator_advance_drums(op_type *op_pt1, Bit32s vib1, op_type *op_pt2, Bit32s vib2, op_type *op_pt3, Bit32s vib3)
+static void OPL_INLINE operator_advance_drums(op_type *op_pt1, Bit32s vib1, op_type *op_pt2, Bit32s vib2, op_type *op_pt3, Bit32s vib3)
 {
 	Bit32u c1 = op_pt1->tcount / FIXEDPT;
 	Bit32u c3 = op_pt3->tcount / FIXEDPT;
@@ -222,7 +222,7 @@ void operator_off(op_type *op_pt)
 	(void)op_pt;
 }
 
-void OPL_INLINE operator_off_il(op_type *op_pt)
+static void OPL_INLINE operator_off_il(op_type *op_pt)
 {
 	(void)op_pt;
 }
@@ -239,7 +239,7 @@ void operator_sustain(op_type *op_pt)
 	op_pt->generator_pos -= num_steps_add * FIXEDPT;
 }
 
-void OPL_INLINE operator_sustain_il(op_type *op_pt)
+static void OPL_INLINE operator_sustain_il(op_type *op_pt)
 {
 	Bit32u num_steps_add = op_pt->generator_pos / FIXEDPT; // number of (standardized) samples
 	for (Bit32u ct = 0; ct < num_steps_add; ct++)
@@ -280,7 +280,7 @@ void operator_release(op_type *op_pt)
 	op_pt->generator_pos -= num_steps_add * FIXEDPT;
 }
 
-void OPL_INLINE operator_release_il(op_type *op_pt)
+static void OPL_INLINE operator_release_il(op_type *op_pt)
 {
 	// ??? boundary?
 	if (op_pt->amp > 0.00000001)
@@ -347,7 +347,7 @@ void operator_decay(op_type *op_pt)
 	op_pt->generator_pos -= num_steps_add * FIXEDPT;
 }
 
-void OPL_INLINE operator_decay_il(op_type *op_pt)
+static void OPL_INLINE operator_decay_il(op_type *op_pt)
 {
 	if (op_pt->amp > op_pt->sustain_level)
 	{
@@ -413,7 +413,7 @@ void operator_attack(op_type *op_pt)
 	op_pt->generator_pos -= num_steps_add * FIXEDPT;
 }
 
-void OPL_INLINE operator_attack_il(op_type *op_pt)
+static void OPL_INLINE operator_attack_il(op_type *op_pt)
 {
 	op_pt->amp = ((op_pt->a3 * op_pt->amp + op_pt->a2) * op_pt->amp + op_pt->a1) * op_pt->amp + op_pt->a0;
 
@@ -442,7 +442,7 @@ void OPL_INLINE operator_attack_il(op_type *op_pt)
 	op_pt->generator_pos -= num_steps_add * FIXEDPT;
 }
 
-void OPL_INLINE opfuncs_inlined(Bit32u opfunc,op_type *op_pt){
+static void OPL_INLINE opfuncs_inlined(Bit32u opfunc,op_type *op_pt){
 	switch (opfunc) {	
 		case 0:
 			operator_attack_il(op_pt);

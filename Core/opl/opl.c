@@ -539,6 +539,7 @@ void OPL_AdjustCallbacks(float value)
 
 #include "opl.h"
 #include "opl_internal.h"
+#include "comp_settings.h"
 
 // #define OPL_DEBUG_TRACE
 
@@ -629,6 +630,10 @@ void OPL_Delay(uint64_t us)
 opl_init_result_t OPL_Init(unsigned int port_base)
 {
 #ifndef ORIGCODE
+    #if NO_MUSIC
+    return OPL_INIT_NONE;
+    #endif
+
     driver = drivers[0];
     driver->init_func(0);
     #if USE_OPL3

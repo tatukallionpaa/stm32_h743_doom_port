@@ -30,8 +30,6 @@
 
 #ifdef ORIGCODE
 #include "SDL.h"
-#else
-#include "ext_mem.h"
 #endif
 
 #include "config.h"
@@ -69,11 +67,8 @@ void I_AtExit(atexit_func_t func, boolean run_on_error)
 {
     atexit_listentry_t *entry;
 
-#ifndef ORIGCODE
     entry = malloc(sizeof(*entry));
-#else
-    entry = ext_mem_allocate(sizeof(*entry));
-#endif
+
 
     entry->func = func;
     entry->run_on_error = run_on_error;

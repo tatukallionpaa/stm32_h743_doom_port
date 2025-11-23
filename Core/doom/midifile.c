@@ -41,11 +41,11 @@ typedef PACKED_STRUCT(
     {
         byte chunk_id[4];
         unsigned int chunk_size;
-    }) chunk_header_t;
+    }) block_header_t;
 
 typedef PACKED_STRUCT(
     {
-        chunk_header_t chunk_header;
+        block_header_t chunk_header;
         unsigned short format_type;
         unsigned short num_tracks;
         unsigned short time_division;
@@ -90,7 +90,7 @@ struct midi_file_s
 
 // Check the header of a chunk:
 
-static boolean CheckChunkHeader(chunk_header_t *chunk,
+static boolean CheckChunkHeader(block_header_t *chunk,
                                 const char *expected_id)
 {
     boolean result;
@@ -418,9 +418,9 @@ static void FreeEvent(midi_event_t *event)
 static boolean ReadTrackHeader(midi_track_t *track, FILE *stream)
 {
     size_t records_read;
-    chunk_header_t chunk_header;
+    block_header_t chunk_header;
 
-    records_read = fread(&chunk_header, sizeof(chunk_header_t), 1, stream);
+    records_read = fread(&chunk_header, sizeof(block_header_t), 1, stream);
 
     if (records_read < 1)
     {
@@ -864,11 +864,11 @@ typedef PACKED_STRUCT(
     {
         byte chunk_id[4];
         unsigned int chunk_size;
-    }) chunk_header_t;
+    }) block_header_t;
 
 typedef PACKED_STRUCT(
     {
-        chunk_header_t chunk_header;
+        block_header_t chunk_header;
         unsigned short format_type;
         unsigned short num_tracks;
         unsigned short time_division;
@@ -913,7 +913,7 @@ struct midi_file_s
 
 // Check the header of a chunk:
 
-static boolean CheckChunkHeader(chunk_header_t *chunk,
+static boolean CheckChunkHeader(block_header_t *chunk,
                                 const char *expected_id)
 {
     boolean result;
@@ -1241,9 +1241,9 @@ static void FreeEvent(midi_event_t *event)
 static boolean ReadTrackHeader(midi_track_t *track, FIL *stream)
 {
     size_t records_read;
-    chunk_header_t chunk_header;
+    block_header_t chunk_header;
 
-    if (f_read(stream, &chunk_header, sizeof(chunk_header_t), &records_read) != FR_OK)
+    if (f_read(stream, &chunk_header, sizeof(block_header_t), &records_read) != FR_OK)
     {
         return false;
     }

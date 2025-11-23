@@ -25,7 +25,7 @@
 #include <stdint.h>
 
 #define HEAP_START 0xC0000000
-#define MAX_HEAP_SIZE 33554432
+#define MAX_HEAP_SIZE 0x2000000
 /**
  * Pointer to the current high watermark of the heap usage
  */

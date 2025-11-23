@@ -221,6 +221,7 @@ static void OPL_Stm32_Shutdown(void)
 
 static int OPL_Stm32_Init(unsigned int port_base)
 {
+    #if !NO_MUSIC
     if (i_stm32_sound_is_init())
     {
         opl_stm32_paused = false;
@@ -245,6 +246,7 @@ static int OPL_Stm32_Init(unsigned int port_base)
     {
         opl_stm32_initialized = false;
     }
+    #endif
     return 1;
 }
 
